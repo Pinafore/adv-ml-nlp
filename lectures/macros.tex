@@ -1,0 +1,79 @@
+%
+
+\usepackage[T1]{fontenc}
+%\usepackage{kmath,kerkis}
+%\usepackage{fouriernc}
+\usepackage[adobe-utopia]{mathdesign}
+%\usepackage{arev}
+\usepackage{times}
+\usepackage{natbib}
+
+\usepackage[noend]{algpseudocode}
+\usepackage{xmpmulti}
+\usepackage{dsfont}
+\usepackage{amsmath}
+
+\usepackage{graphicx,float,wrapfig, bbm}
+\usepackage{amsfonts, comment}
+\usepackage{mdwlist}
+\usepackage{subfigure}
+\usepackage{colortbl}
+
+
+\usepackage{multirow}
+
+
+
+
+% packages
+
+\usepackage{amsfonts}
+
+% environments
+
+\newenvironment{packed_enumerate}{
+  \begin{enumerate}
+    \setlength{\topsep}{0pt}
+    \setlength{\itemsep}{2pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+\newenvironment{stepit}
+ {\begin{itemize}[<+-|alert@+>]}
+   {\end{itemize}}
+
+% commands
+
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\ex}[1]{\mbox{exp}\left\{ #1\right\} }
+\newcommand{\e}[2]{\mathbb{E}_{#1}\left[ #2 \right] }
+\newcommand{\g}{\, | \,}
+\newcommand{\indpt}{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand{\E}{\textrm{E}}
+\newcommand{\R}{\textrm{R}}
+\newcommand{\realline}{\mathbb{R}}
+\newcommand{\data}{{\cal D}}
+\newcommand{\loglik}{{\cal L}}
+\newcommand{\grad}[2]{ \frac{\partial{#1}}{\partial#2}}
+\newcommand{\dir}[1]{\mbox{Dir}(#1)}
+\newcommand{\mult}[1]{\mbox{Mult}( #1)}
+\newcommand{\G}[1]{\Gamma \left( \textstyle #1 \right)}
+\newcommand{\ind}[1]{\mathds{1}\left[ #1 \right] }
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\newcommand{\class}[1]{ \texttt{#1}}
+\newcommand{\term}[1]{ ``#1''}
+\newcommand{\tcword}[0]{ w }
+\newcommand{\docsetlabeled}[0]{ D }
+\newcommand{\onedoclabeled}[0]{ d }
+\newcommand{\tcposindex}[0]{ i }
+\newcommand{\myblue}[1]{ {\textbf #1 }}
+\newcommand{\dnrm}[1]{ _{\mbox{\textsc{ #1 }}}}
+\newcommand{\argmax}[0]{ \arg \max }
+\newcommand{\tcjclass}[0]{c_j}
+\newcommand{\maths}[1]{ {\bf #1}}
+
+% complexity
+\renewcommand{\O}{\mathcal{O}}
