@@ -1,0 +1,75 @@
+
+
+\input{../../common/macros}
+
+
+\setbeamersize{text margin left=0.5cm}
+\setbeamersize{text margin right=0.5cm}
+\setbeamercolor{alert}{fg=red!75!black}
+
+\usetheme{default}
+\useinnertheme{circles}
+\useoutertheme{split}
+\usecolortheme{seahorse}
+% \usecolortheme{dove}
+% \usecolortheme{seagull}
+%\usecolortheme{default}
+% \usecolortheme{dolphin}
+\usefonttheme{structurebold}
+%\usefonttheme{serif}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
+\setbeamercolor{itemize item}{fg=gray}
+\setbeamercolor{enumerate item}{fg=gray}
+\setbeamercolor{itemize item}{fg=gray}
+\setbeamercolor{itemize subitem}{fg=gray}
+\setbeamercolor{item projected}{bg=gray}
+\setbeamercolor{subitem projected}{bg=gray}
+
+
+\newenvironment{bullets}
+{\begin{itemize} \setlength{\itemsep}{10pt}}
+{\end{itemize}}
+
+\newcommand{\mygraphic}[2]{
+  \begin{beamercolorbox}[colorsep*=4pt]{black math}
+    \begin{center}
+      \includegraphics[#1]{#2}
+    \end{center}
+  \end{beamercolorbox}
+}
+
+\setbeamercolor{structure}{bg=gray}
+\setbeamercolor{section in head/foot}{bg=gray}
+\setbeamercolor{palette primary}{bg=lightgray}
+
+
+\usepackage{minted}
+
+\usetheme[pageofpages=of,                    % String used between the current page and the
+                                             % total page count.
+          bullet=circle,                     % Use circles instead of squares for bullets.
+          titleline=true,                    % Show a line below the frame title.
+          showdate=true,                     % show the date on the title page
+          alternativetitlepage=true,         % Use the fancy title page.
+          titlepagelogo=../../common/culogo,              % Logo for the first page.
+          % Logo for the header on first page.
+          headerlogo=../../common/boulder_cs,
+          ]{UCBoulder}
+
+\usecolortheme{ucdblack}
+\author{Introduction to Data Science Algorithms}
+
+
+\institute[Boyd-Graber and Paul] % (optional, but mostly needed)
+{Jordan Boyd-Graber and Michael Paul}
+
+
+\AtBeginSection[] % "Beamer, do the following at the start of every section"
+{ \begin{frame} \frametitle{Outline} % make a frame titled "Outline"
+\tableofcontents[currentsection] % show TOC and highlight current section
+\end{frame} }

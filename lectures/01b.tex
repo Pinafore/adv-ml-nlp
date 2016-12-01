@@ -1,0 +1,614 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{online/#1}
+\end{center}
+}
+\title{Why Language is Hard: Structure and Predictions}
+\date{Structured Prediction Example}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+
+\begin{frame}{2D Example}
+
+	Initially, weight vector is zero:
+	\begin{equation}
+		\vec w_1 = \langle 0, 0 \rangle
+	\end{equation}
+
+\end{frame}
+
+\begin{frame}{Observation 1}
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\gfx{perceptron_ex_1}{.9}
+	\column{.4\linewidth}
+	\begin{center}
+	\begin{align}
+		x_1 = & \langle -2, 2 \rangle \\
+		\hat y_1 = & 0 \\
+		y_1 = & +1
+	\end{align}
+	\end{center}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Update 1}
+
+	\begin{align}
+		\vec w_{t+1} & \leftarrow \vec w_t + y_t \vec x_t \\
+		\vec w_{2} & \leftarrow  \only<2->{\langle 0, 0 \rangle + \langle -2, 2 \rangle \\}
+		\only<3->{\vec w_{2} & = \langle -2, 2 \rangle}
+	\end{align}
+
+\end{frame}
+
+\begin{frame}{Observation 2}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\only<1>{\gfx{perceptron_ex_2}{.9}}
+	\only<2->{\gfx{perceptron_ex_3}{.9}}
+	\column{.4\linewidth}
+	\only<2->{
+	\begin{center}
+	\begin{align}
+		x_2 = & \langle -2, -3 \rangle \\
+		\hat y_2 = & +4 + -6 = -2 \\
+		y_2 = & -1
+	\end{align}
+	\end{center}
+	}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}{Update 2}
+
+	\begin{align}
+		\vec w_{t+1} & \leftarrow \vec w_t  \\
+		\vec w_{2} & \leftarrow  \only<2->{\langle -2, 2 \rangle \\}
+		\only<3->{\vec w_{2} & = \langle -2, 2 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Observation 3}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\only<1>{\gfx{perceptron_ex_4}{.9}}
+	\only<2->{\gfx{perceptron_ex_5}{.9}}
+	\column{.4\linewidth}
+	\only<2->{
+	\begin{center}
+	\begin{align}
+		x_3 = & \langle 2, -1 \rangle \\
+		\hat y_3 = & -4 + -2 = -6 \\
+		y_3 = & +1
+	\end{align}
+	\end{center}
+	}
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Update 3}
+
+	\begin{align}
+		\vec w_{t+1} & \leftarrow \vec w_t + y_t \vec x_t \\
+		\vec w_{3} & \leftarrow  \only<2->{\langle -2, 2 \rangle + \langle 2, -1 \rangle \\}
+		\only<3->{\vec w_{3} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Observation 4}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\only<1>{\gfx{perceptron_ex_6}{.9}}
+	\only<2->{\gfx{perceptron_ex_7}{.9}}
+	\column{.35\linewidth}
+	\only<2->{
+	\begin{center}
+	\begin{align}
+		x_4 = & \langle 1, -4 \rangle \\
+		\hat y_4 = & -4 \\
+		y_4 = & -1
+	\end{align}
+	\end{center}
+	}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}{Update 4}
+
+	\begin{align}
+		\vec w_{4} & \leftarrow  \only<2->{\vec w_3 \\}
+		\only<3->{\vec w_{4} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Observation 5}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\gfx{perceptron_ex_8}{.9}
+	\column{.35\linewidth}
+
+	\begin{center}
+	\begin{align}
+		x_5 = & \langle 2, 2 \rangle \\
+		\hat y_5 = & 2 \\
+		y_5 = & +1
+	\end{align}
+	\end{center}
+
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Update 5}
+
+	\begin{align}
+		\vec w_{5} & \leftarrow  \only<2->{\vec w_4 \\}
+		\only<3->{\vec w_{5} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+\begin{frame}{Observation 6}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\gfx{perceptron_ex_9}{.9}
+	\column{.35\linewidth}
+
+	\begin{center}
+	\begin{align}
+		x_6 = & \langle 2, 2 \rangle \\
+		\hat y_6 = & 2 \\
+		y_6 = & +1
+	\end{align}
+	\end{center}
+
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Update 6}
+
+	\begin{align}
+		\vec w_{6} & \leftarrow  \only<2->{\vec w_5 \\}
+		\only<3->{\vec w_{6} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Decoding Sentence 1}
+
+
+\only<2>{$w_{\mbox{START, VB}} + w_{\mbox{VB, answer}} = 0.00 + 0.00 = \alert<2>{0.00}$}
+\only<3>{$w_{\mbox{START, DET}} + w_{\mbox{DET, answer}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, PRO}} + w_{\mbox{PRO, answer}} = 0.00 + 0.00 = \alert<4>{0.00}$}
+\only<5>{$w_{\mbox{START, NN}} + w_{\mbox{NN, answer}} = 0.00 + 0.00 = \alert<5>{0.00}$}
+\only<6>{$\delta_0(VB) + w_{\mbox{VB, VB}} + w_{\mbox{VB, the}} = 0.00 + 0.00 + 0.00 = \alert<6>{0.00}$}
+\only<7>{$\delta_0(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, the}} = 0.00 + 0.00 + 0.00 = \alert<7>{0.00}$}
+\only<8>{$\delta_0(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, the}} = 0.00 + 0.00 + 0.00 = \alert<8>{0.00}$}
+\only<9>{$\delta_0(VB) + w_{\mbox{VB, NN}} + w_{\mbox{NN, the}} = 0.00 + 0.00 + 0.00 = \alert<9>{0.00}$}
+\only<10>{$\delta_1(VB) + w_{\mbox{VB, VB}} + w_{\mbox{VB, question}} = 0.00 + 0.00 + 0.00 = \alert<10>{0.00}$}
+\only<11>{$\delta_1(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, question}} = 0.00 + 0.00 + 0.00 = \alert<11>{0.00}$}
+\only<12>{$\delta_1(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, question}} = 0.00 + 0.00 + 0.00 = \alert<12>{0.00}$}
+\only<13>{$\delta_1(VB) + w_{\mbox{VB, NN}} + w_{\mbox{NN, question}} = 0.00 + 0.00 + 0.00 = \alert<13>{0.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{answer}_{0}	&\mbox{the}_{1}	&\mbox{question}_{2}\cr
+VB	&\only<2->{\alert<2>{0.00}}	&\only<6->{\alert<6>{0.00}}	&\only<10->{\alert<10>{0.00}}	&\cr
+DET	&\only<3->{\alert<3>{0.00}}	&\only<7->{\alert<7>{0.00}}	&\only<11->{\alert<11>{0.00}}	&\cr
+PRO	&\only<4->{\alert<4>{0.00}}	&\only<8->{\alert<8>{0.00}}	&\only<12->{\alert<12>{0.00}}	&\cr
+NN	&\only<5->{\alert<5>{0.00}}	&\only<9->{\alert<9>{0.00}}	&\only<13->{\alert<13>{0.00}}	&\cr
+}\end{equation}
+
+\only<14->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{the}_{1}	&\mbox{question}_{2}\cr
+\mbox{VB}&	\alert<15>{VB}&	\alert<15>{VB}\cr
+\mbox{DET}&	VB&	VB\cr
+\mbox{PRO}&	VB&	VB\cr
+\mbox{NN}&	VB&	VB\cr
+}\end{equation}
+}
+\only<16->{
+\item Reconstruction: VB VB VB}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: VB DET NN
+\item Prediction: VB \alert<2>{VB} \alert<2>{VB}\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(DET,~the) (DET,~NN) (VB,~DET) (NN,~question) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(START,~VB) (VB,~answer) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(VB,~the) (VB,~question) (VB,~VB) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: \alert<5>{(DET,~NN)}:~1.00; \alert<5>{(DET,~the)}:~1.00; \alert<5>{(NN,~question)}:~1.00; \alert<5>{(VB,~DET)}:~1.00; \alert<5>{(VB,~VB)}:~-2.00; \alert<5>{(VB,~question)}:~-1.00; \alert<5>{(VB,~the)}:~-1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}{Decoding Sentence 2}
+
+
+\only<2>{$w_{\mbox{START, VB}} + w_{\mbox{VB, question}} = 0.00 + -1.00 = \alert<2>{-1.00}$}
+\only<3>{$w_{\mbox{START, DET}} + w_{\mbox{DET, question}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, PRO}} + w_{\mbox{PRO, question}} = 0.00 + 0.00 = \alert<4>{0.00}$}
+\only<5>{$w_{\mbox{START, NN}} + w_{\mbox{NN, question}} = 0.00 + 1.00 = \alert<5>{1.00}$}
+\only<6>{$\delta_0(NN) + w_{\mbox{NN, VB}} + w_{\mbox{VB, the}} = 1.00 + 0.00 + -1.00 = \alert<6>{0.00}$}
+\only<7>{$\delta_0(NN) + w_{\mbox{NN, DET}} + w_{\mbox{DET, the}} = 1.00 + 0.00 + 1.00 = \alert<7>{2.00}$}
+\only<8>{$\delta_0(NN) + w_{\mbox{NN, PRO}} + w_{\mbox{PRO, the}} = 1.00 + 0.00 + 0.00 = \alert<8>{1.00}$}
+\only<9>{$\delta_0(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, the}} = 0.00 + 1.00 + 0.00 = \alert<9>{1.00}$}
+\only<10>{$\delta_1(DET) + w_{\mbox{DET, VB}} + w_{\mbox{VB, answer}} = 2.00 + 0.00 + 0.00 = \alert<10>{2.00}$}
+\only<11>{$\delta_1(DET) + w_{\mbox{DET, DET}} + w_{\mbox{DET, answer}} = 2.00 + 0.00 + 0.00 = \alert<11>{2.00}$}
+\only<12>{$\delta_1(DET) + w_{\mbox{DET, PRO}} + w_{\mbox{PRO, answer}} = 2.00 + 0.00 + 0.00 = \alert<12>{2.00}$}
+\only<13>{$\delta_1(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, answer}} = 2.00 + 1.00 + 0.00 = \alert<13>{3.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{question}_{0}	&\mbox{the}_{1}	&\mbox{answer}_{2}\cr
+VB	&\only<2->{\alert<2>{-1.00}}	&\only<6->{\alert<6>{0.00}}	&\only<10->{\alert<10>{2.00}}	&\cr
+DET	&\only<3->{\alert<3>{0.00}}	&\only<7->{\alert<7>{2.00}}	&\only<11->{\alert<11>{2.00}}	&\cr
+PRO	&\only<4->{\alert<4>{0.00}}	&\only<8->{\alert<8>{1.00}}	&\only<12->{\alert<12>{2.00}}	&\cr
+NN	&\only<5->{\alert<5>{1.00}}	&\only<9->{\alert<9>{1.00}}	&\only<13->{\alert<13>{3.00}}	&\cr
+}\end{equation}
+
+\only<14->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{the}_{1}	&\mbox{answer}_{2}\cr
+\mbox{VB}&	NN&	DET\cr
+\mbox{DET}&	\alert<15>{NN}&	DET\cr
+\mbox{PRO}&	NN&	DET\cr
+\mbox{NN}&	DET&	\alert<15>{DET}\cr
+}\end{equation}
+}
+\only<16->{
+\item Reconstruction: NN DET NN}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: VB DET NN
+\item Prediction: \alert<2>{NN} DET NN\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(VB,~DET) (START,~VB) (VB,~question) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(DET,~the) (DET,~NN) (NN,~answer) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(START,~NN) (NN,~question) (NN,~DET) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: (DET, NN): 1.00; (DET, the): 1.00; \alert<5>{(NN,~DET)}:~-1.00; \alert<5>{(VB,~DET)}:~2.00; (VB, VB): -2.00; (VB, the): -1.00; \alert<5>{(START,~NN)}:~-1.00; \alert<5>{(START,~VB)}:~1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}{Decoding Sentence 3}
+
+
+\only<2>{$w_{\mbox{START, VB}} + w_{\mbox{VB, you}} = 1.00 + 0.00 = \alert<2>{1.00}$}
+\only<3>{$w_{\mbox{START, DET}} + w_{\mbox{DET, you}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, PRO}} + w_{\mbox{PRO, you}} = 0.00 + 0.00 = \alert<4>{0.00}$}
+\only<5>{$w_{\mbox{START, NN}} + w_{\mbox{NN, you}} = -1.00 + 0.00 = \alert<5>{-1.00}$}
+\only<6>{$\delta_0(DET) + w_{\mbox{DET, VB}} + w_{\mbox{VB, demand}} = 0.00 + 0.00 + 0.00 = \alert<6>{0.00}$}
+\only<7>{$\delta_0(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, demand}} = 1.00 + 2.00 + 0.00 = \alert<7>{3.00}$}
+\only<8>{$\delta_0(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, demand}} = 1.00 + 0.00 + 0.00 = \alert<8>{1.00}$}
+\only<9>{$\delta_0(VB) + w_{\mbox{VB, NN}} + w_{\mbox{NN, demand}} = 1.00 + 0.00 + 0.00 = \alert<9>{1.00}$}
+\only<10>{$\delta_1(DET) + w_{\mbox{DET, VB}} + w_{\mbox{VB, the}} = 3.00 + 0.00 + -1.00 = \alert<10>{2.00}$}
+\only<11>{$\delta_1(DET) + w_{\mbox{DET, DET}} + w_{\mbox{DET, the}} = 3.00 + 0.00 + 1.00 = \alert<11>{4.00}$}
+\only<12>{$\delta_1(DET) + w_{\mbox{DET, PRO}} + w_{\mbox{PRO, the}} = 3.00 + 0.00 + 0.00 = \alert<12>{3.00}$}
+\only<13>{$\delta_1(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, the}} = 3.00 + 1.00 + 0.00 = \alert<13>{4.00}$}
+\only<14>{$\delta_2(DET) + w_{\mbox{DET, VB}} + w_{\mbox{VB, delay}} = 4.00 + 0.00 + 0.00 = \alert<14>{4.00}$}
+\only<15>{$\delta_2(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, delay}} = 2.00 + 2.00 + 0.00 = \alert<15>{4.00}$}
+\only<16>{$\delta_2(DET) + w_{\mbox{DET, PRO}} + w_{\mbox{PRO, delay}} = 4.00 + 0.00 + 0.00 = \alert<16>{4.00}$}
+\only<17>{$\delta_2(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, delay}} = 4.00 + 1.00 + 0.00 = \alert<17>{5.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{you}_{0}	&\mbox{demand}_{1}	&\mbox{the}_{2}	&\mbox{delay}_{3}\cr
+VB	&\only<2->{\alert<2>{1.00}}	&\only<6->{\alert<6>{0.00}}	&\only<10->{\alert<10>{2.00}}	&\only<14->{\alert<14>{4.00}}	&\cr
+DET	&\only<3->{\alert<3>{0.00}}	&\only<7->{\alert<7>{3.00}}	&\only<11->{\alert<11>{4.00}}	&\only<15->{\alert<15>{4.00}}	&\cr
+PRO	&\only<4->{\alert<4>{0.00}}	&\only<8->{\alert<8>{1.00}}	&\only<12->{\alert<12>{3.00}}	&\only<16->{\alert<16>{4.00}}	&\cr
+NN	&\only<5->{\alert<5>{-1.00}}	&\only<9->{\alert<9>{1.00}}	&\only<13->{\alert<13>{4.00}}	&\only<17->{\alert<17>{5.00}}	&\cr
+}\end{equation}
+
+\only<18->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{demand}_{1}	&\mbox{the}_{2}	&\mbox{delay}_{3}\cr
+\mbox{VB}&	DET&	DET&	DET\cr
+\mbox{DET}&	\alert<19>{VB}&	\alert<19>{DET}&	VB\cr
+\mbox{PRO}&	VB&	DET&	DET\cr
+\mbox{NN}&	VB&	DET&	\alert<19>{DET}\cr
+}\end{equation}
+}
+\only<20->{
+\item Reconstruction: VB DET DET NN}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: PRO VB DET NN
+\item Prediction: \alert<2>{VB} \alert<2>{DET} DET NN\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(VB,~demand) (PRO,~you) (START,~PRO) (PRO,~VB) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(DET,~the) (DET,~NN) (VB,~DET) (NN,~delay) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(DET,~DET) (START,~VB) (DET,~demand) (VB,~you) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: \alert<5>{(DET,~DET)}:~-1.00; (DET, NN): 1.00; \alert<5>{(DET,~demand)}:~-1.00; (DET, the): 1.00; (NN, DET): -1.00; \alert<5>{(PRO,~VB)}:~1.00; \alert<5>{(PRO,~you)}:~1.00; (VB, DET): 2.00; (VB, VB): -2.00; \alert<5>{(VB,~demand)}:~1.00; (VB, the): -1.00; \alert<5>{(VB,~you)}:~-1.00; (START, NN): -1.00; \alert<5>{(START,~PRO)}:~1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}{Decoding Sentence 4}
+
+
+\only<2>{$w_{\mbox{START, VB}} + w_{\mbox{VB, you}} = 0.00 + -1.00 = \alert<2>{-1.00}$}
+\only<3>{$w_{\mbox{START, DET}} + w_{\mbox{DET, you}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, PRO}} + w_{\mbox{PRO, you}} = 1.00 + 1.00 = \alert<4>{2.00}$}
+\only<5>{$w_{\mbox{START, NN}} + w_{\mbox{NN, you}} = -1.00 + 0.00 = \alert<5>{-1.00}$}
+\only<6>{$\delta_0(PRO) + w_{\mbox{PRO, VB}} + w_{\mbox{VB, delay}} = 2.00 + 1.00 + 0.00 = \alert<6>{3.00}$}
+\only<7>{$\delta_0(PRO) + w_{\mbox{PRO, DET}} + w_{\mbox{DET, delay}} = 2.00 + 0.00 + 0.00 = \alert<7>{2.00}$}
+\only<8>{$\delta_0(PRO) + w_{\mbox{PRO, PRO}} + w_{\mbox{PRO, delay}} = 2.00 + 0.00 + 0.00 = \alert<8>{2.00}$}
+\only<9>{$\delta_0(PRO) + w_{\mbox{PRO, NN}} + w_{\mbox{NN, delay}} = 2.00 + 0.00 + 0.00 = \alert<9>{2.00}$}
+\only<10>{$\delta_1(PRO) + w_{\mbox{PRO, VB}} + w_{\mbox{VB, the}} = 2.00 + 1.00 + -1.00 = \alert<10>{2.00}$}
+\only<11>{$\delta_1(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, the}} = 3.00 + 2.00 + 1.00 = \alert<11>{6.00}$}
+\only<12>{$\delta_1(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, the}} = 3.00 + 0.00 + 0.00 = \alert<12>{3.00}$}
+\only<13>{$\delta_1(VB) + w_{\mbox{VB, NN}} + w_{\mbox{NN, the}} = 3.00 + 0.00 + 0.00 = \alert<13>{3.00}$}
+\only<14>{$\delta_2(DET) + w_{\mbox{DET, VB}} + w_{\mbox{VB, demand}} = 6.00 + 0.00 + 1.00 = \alert<14>{7.00}$}
+\only<15>{$\delta_2(DET) + w_{\mbox{DET, DET}} + w_{\mbox{DET, demand}} = 6.00 + -1.00 + -1.00 = \alert<15>{4.00}$}
+\only<16>{$\delta_2(DET) + w_{\mbox{DET, PRO}} + w_{\mbox{PRO, demand}} = 6.00 + 0.00 + 0.00 = \alert<16>{6.00}$}
+\only<17>{$\delta_2(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, demand}} = 6.00 + 1.00 + 0.00 = \alert<17>{7.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{you}_{0}	&\mbox{delay}_{1}	&\mbox{the}_{2}	&\mbox{demand}_{3}\cr
+VB	&\only<2->{\alert<2>{-1.00}}	&\only<6->{\alert<6>{3.00}}	&\only<10->{\alert<10>{2.00}}	&\only<14->{\alert<14>{7.00}}	&\cr
+DET	&\only<3->{\alert<3>{0.00}}	&\only<7->{\alert<7>{2.00}}	&\only<11->{\alert<11>{6.00}}	&\only<15->{\alert<15>{4.00}}	&\cr
+PRO	&\only<4->{\alert<4>{2.00}}	&\only<8->{\alert<8>{2.00}}	&\only<12->{\alert<12>{3.00}}	&\only<16->{\alert<16>{6.00}}	&\cr
+NN	&\only<5->{\alert<5>{-1.00}}	&\only<9->{\alert<9>{2.00}}	&\only<13->{\alert<13>{3.00}}	&\only<17->{\alert<17>{7.00}}	&\cr
+}\end{equation}
+
+\only<18->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{delay}_{1}	&\mbox{the}_{2}	&\mbox{demand}_{3}\cr
+\mbox{VB}&	\alert<19>{PRO}&	PRO&	\alert<19>{DET}\cr
+\mbox{DET}&	PRO&	\alert<19>{VB}&	DET\cr
+\mbox{PRO}&	PRO&	VB&	DET\cr
+\mbox{NN}&	PRO&	VB&	DET\cr
+}\end{equation}
+}
+\only<20->{
+\item Reconstruction: PRO VB DET VB}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: PRO VB DET NN
+\item Prediction: PRO VB DET \alert<2>{VB}\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(DET,~NN) (NN,~demand) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(VB,~delay) (DET,~the) (VB,~DET) (PRO,~you) (START,~PRO) (PRO,~VB) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(DET,~VB) (VB,~demand) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: (DET, DET): -1.00; \alert<5>{(DET,~NN)}:~2.00; \alert<5>{(DET,~VB)}:~-1.00; (DET, demand): -1.00; (DET, the): 1.00; (NN, DET): -1.00; \alert<5>{(NN,~demand)}:~1.00; (PRO, VB): 1.00; (PRO, you): 1.00; (VB, DET): 2.00; (VB, VB): -2.00; (VB, the): -1.00; (VB, you): -1.00; (START, NN): -1.00; (START, PRO): 1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}{Decoding Sentence 5}
+
+
+\only<2>{$w_{\mbox{START, VB}} + w_{\mbox{VB, what}} = 0.00 + 0.00 = \alert<2>{0.00}$}
+\only<3>{$w_{\mbox{START, DET}} + w_{\mbox{DET, what}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, PRO}} + w_{\mbox{PRO, what}} = 1.00 + 0.00 = \alert<4>{1.00}$}
+\only<5>{$w_{\mbox{START, NN}} + w_{\mbox{NN, what}} = -1.00 + 0.00 = \alert<5>{-1.00}$}
+\only<6>{$\delta_0(PRO) + w_{\mbox{PRO, VB}} + w_{\mbox{VB, silence}} = 1.00 + 1.00 + 0.00 = \alert<6>{2.00}$}
+\only<7>{$\delta_0(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, silence}} = 0.00 + 2.00 + 0.00 = \alert<7>{2.00}$}
+\only<8>{$\delta_0(PRO) + w_{\mbox{PRO, PRO}} + w_{\mbox{PRO, silence}} = 1.00 + 0.00 + 0.00 = \alert<8>{1.00}$}
+\only<9>{$\delta_0(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, silence}} = 0.00 + 2.00 + 0.00 = \alert<9>{2.00}$}
+\only<10>{$\delta_1(PRO) + w_{\mbox{PRO, VB}} + w_{\mbox{VB, can}} = 1.00 + 1.00 + 0.00 = \alert<10>{2.00}$}
+\only<11>{$\delta_1(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, can}} = 2.00 + 2.00 + 0.00 = \alert<11>{4.00}$}
+\only<12>{$\delta_1(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, can}} = 2.00 + 0.00 + 0.00 = \alert<12>{2.00}$}
+\only<13>{$\delta_1(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, can}} = 2.00 + 2.00 + 0.00 = \alert<13>{4.00}$}
+\only<14>{$\delta_2(NN) + w_{\mbox{NN, VB}} + w_{\mbox{VB, show}} = 4.00 + 0.00 + 0.00 = \alert<14>{4.00}$}
+\only<15>{$\delta_2(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, show}} = 2.00 + 2.00 + 0.00 = \alert<15>{4.00}$}
+\only<16>{$\delta_2(DET) + w_{\mbox{DET, PRO}} + w_{\mbox{PRO, show}} = 4.00 + 0.00 + 0.00 = \alert<16>{4.00}$}
+\only<17>{$\delta_2(DET) + w_{\mbox{DET, NN}} + w_{\mbox{NN, show}} = 4.00 + 2.00 + 0.00 = \alert<17>{6.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{what}_{0}	&\mbox{silence}_{1}	&\mbox{can}_{2}	&\mbox{show}_{3}\cr
+VB	&\only<2->{\alert<2>{0.00}}	&\only<6->{\alert<6>{2.00}}	&\only<10->{\alert<10>{2.00}}	&\only<14->{\alert<14>{4.00}}	&\cr
+DET	&\only<3->{\alert<3>{0.00}}	&\only<7->{\alert<7>{2.00}}	&\only<11->{\alert<11>{4.00}}	&\only<15->{\alert<15>{4.00}}	&\cr
+PRO	&\only<4->{\alert<4>{1.00}}	&\only<8->{\alert<8>{1.00}}	&\only<12->{\alert<12>{2.00}}	&\only<16->{\alert<16>{4.00}}	&\cr
+NN	&\only<5->{\alert<5>{-1.00}}	&\only<9->{\alert<9>{2.00}}	&\only<13->{\alert<13>{4.00}}	&\only<17->{\alert<17>{6.00}}	&\cr
+}\end{equation}
+
+\only<18->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{silence}_{1}	&\mbox{can}_{2}	&\mbox{show}_{3}\cr
+\mbox{VB}&	\alert<19>{PRO}&	PRO&	NN\cr
+\mbox{DET}&	VB&	\alert<19>{VB}&	VB\cr
+\mbox{PRO}&	PRO&	VB&	DET\cr
+\mbox{NN}&	DET&	DET&	\alert<19>{DET}\cr
+}\end{equation}
+}
+\only<20->{
+\item Reconstruction: PRO VB DET NN}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: PRO NN VB VB
+\item Prediction: PRO \alert<2>{VB} \alert<2>{DET} \alert<2>{NN}\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(VB,~show) (VB,~can) (PRO,~NN) (NN,~silence) (NN,~VB) (VB,~VB) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(START,~PRO) (PRO,~what) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(DET,~can) (NN,~show) (VB,~silence) (DET,~NN) (VB,~DET) (PRO,~VB) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: (DET, DET): -1.00; \alert<5>{(DET,~NN)}:~1.00; (DET, VB): -1.00; \alert<5>{(DET,~can)}:~-1.00; (DET, demand): -1.00; (DET, the): 1.00; (NN, DET): -1.00; \alert<5>{(NN,~VB)}:~1.00; (NN, demand): 1.00; \alert<5>{(NN,~show)}:~-1.00; \alert<5>{(NN,~silence)}:~1.00; \alert<5>{(PRO,~NN)}:~1.00; (PRO, you): 1.00; \alert<5>{(VB,~DET)}:~1.00; \alert<5>{(VB,~VB)}:~-1.00; \alert<5>{(VB,~can)}:~1.00; \alert<5>{(VB,~show)}:~1.00; \alert<5>{(VB,~silence)}:~-1.00; (VB, the): -1.00; (VB, you): -1.00; (START, NN): -1.00; (START, PRO): 1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}{Decoding Sentence 6}
+
+
+\only<2>{$w_{\mbox{START, VB}} + w_{\mbox{VB, what}} = 0.00 + 0.00 = \alert<2>{0.00}$}
+\only<3>{$w_{\mbox{START, DET}} + w_{\mbox{DET, what}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, PRO}} + w_{\mbox{PRO, what}} = 1.00 + 0.00 = \alert<4>{1.00}$}
+\only<5>{$w_{\mbox{START, NN}} + w_{\mbox{NN, what}} = -1.00 + 0.00 = \alert<5>{-1.00}$}
+\only<6>{$\delta_0(PRO) + w_{\mbox{PRO, VB}} + w_{\mbox{VB, show}} = 1.00 + 0.00 + 1.00 = \alert<6>{2.00}$}
+\only<7>{$\delta_0(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, show}} = 0.00 + 1.00 + 0.00 = \alert<7>{1.00}$}
+\only<8>{$\delta_0(PRO) + w_{\mbox{PRO, PRO}} + w_{\mbox{PRO, show}} = 1.00 + 0.00 + 0.00 = \alert<8>{1.00}$}
+\only<9>{$\delta_0(PRO) + w_{\mbox{PRO, NN}} + w_{\mbox{NN, show}} = 1.00 + 1.00 + -1.00 = \alert<9>{1.00}$}
+\only<10>{$\delta_1(NN) + w_{\mbox{NN, VB}} + w_{\mbox{VB, can}} = 1.00 + 1.00 + 1.00 = \alert<10>{3.00}$}
+\only<11>{$\delta_1(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, can}} = 2.00 + 1.00 + -1.00 = \alert<11>{2.00}$}
+\only<12>{$\delta_1(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, can}} = 2.00 + 0.00 + 0.00 = \alert<12>{2.00}$}
+\only<13>{$\delta_1(VB) + w_{\mbox{VB, NN}} + w_{\mbox{NN, can}} = 2.00 + 0.00 + 0.00 = \alert<13>{2.00}$}
+\only<14>{$\delta_2(NN) + w_{\mbox{NN, VB}} + w_{\mbox{VB, silence}} = 2.00 + 1.00 + -1.00 = \alert<14>{2.00}$}
+\only<15>{$\delta_2(VB) + w_{\mbox{VB, DET}} + w_{\mbox{DET, silence}} = 3.00 + 1.00 + 0.00 = \alert<15>{4.00}$}
+\only<16>{$\delta_2(VB) + w_{\mbox{VB, PRO}} + w_{\mbox{PRO, silence}} = 3.00 + 0.00 + 0.00 = \alert<16>{3.00}$}
+\only<17>{$\delta_2(VB) + w_{\mbox{VB, NN}} + w_{\mbox{NN, silence}} = 3.00 + 0.00 + 1.00 = \alert<17>{4.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{what}_{0}	&\mbox{show}_{1}	&\mbox{can}_{2}	&\mbox{silence}_{3}\cr
+VB	&\only<2->{\alert<2>{0.00}}	&\only<6->{\alert<6>{2.00}}	&\only<10->{\alert<10>{3.00}}	&\only<14->{\alert<14>{2.00}}	&\cr
+DET	&\only<3->{\alert<3>{0.00}}	&\only<7->{\alert<7>{1.00}}	&\only<11->{\alert<11>{2.00}}	&\only<15->{\alert<15>{4.00}}	&\cr
+PRO	&\only<4->{\alert<4>{1.00}}	&\only<8->{\alert<8>{1.00}}	&\only<12->{\alert<12>{2.00}}	&\only<16->{\alert<16>{3.00}}	&\cr
+NN	&\only<5->{\alert<5>{-1.00}}	&\only<9->{\alert<9>{1.00}}	&\only<13->{\alert<13>{2.00}}	&\only<17->{\alert<17>{4.00}}	&\cr
+}\end{equation}
+
+\only<18->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{show}_{1}	&\mbox{can}_{2}	&\mbox{silence}_{3}\cr
+\mbox{VB}&	PRO&	\alert<19>{NN}&	NN\cr
+\mbox{DET}&	VB&	VB&	\alert<19>{VB}\cr
+\mbox{PRO}&	PRO&	VB&	VB\cr
+\mbox{NN}&	\alert<19>{PRO}&	VB&	VB\cr
+}\end{equation}
+}
+\only<20->{
+\item Reconstruction: PRO NN VB DET}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: PRO NN VB VB
+\item Prediction: PRO NN VB \alert<2>{DET}\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(VB,~silence) (VB,~VB) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(NN,~show) (VB,~can) (PRO,~NN) (NN,~VB) (START,~PRO) (PRO,~what) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(DET,~silence) (VB,~DET) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: (DET, DET): -1.00; (DET, NN): 1.00; (DET, VB): -1.00; (DET, can): -1.00; (DET, demand): -1.00; \alert<5>{(DET,~silence)}:~-1.00; (DET, the): 1.00; (NN, DET): -1.00; (NN, VB): 1.00; (NN, demand): 1.00; (NN, show): -1.00; (NN, silence): 1.00; (PRO, NN): 1.00; (PRO, you): 1.00; (VB, can): 1.00; (VB, show): 1.00; (VB, the): -1.00; (VB, you): -1.00; (START, NN): -1.00; (START, PRO): 1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+
+
+\end{document}

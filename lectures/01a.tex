@@ -1,0 +1,179 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{online/#1}
+\end{center}
+}
+\title{Why Language is Hard: Structure and Predictions}
+\date{Slides adapted from Liang Huang}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+
+\section{Perceptron Algorithm}
+
+\begin{frame}{Perceptron Algorithm}
+
+	\begin{itemize}
+		\item Online algorithm for classification
+		\item Very similar to logistic regression (but 0/1 loss)
+		\item But what can we prove?
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{$k$-means}
+\begin{algorithmic}[1]
+\State $\vec w_1 \gets \vec 0$
+ \For{$t \leftarrow 1 \dots T$}
+  \State Receive $x_t$
+  \State $\hat y_t \gets $ sgn$(\vec w_t \cdot \vec x_t)$
+  \State Receive $y_t$
+  \If{$\hat y_t \not = y_t$}
+   \State $\vec w_{t+1} \gets \vec w_t + y_t \vec x_t $
+   \Else
+   \State $\vec w_{t+1} \gets w_t$
+   \EndIf
+ \EndFor
+\Return $w_{T+1}$
+\end{algorithmic}
+
+
+\end{frame}
+
+
+\begin{frame}{Objective Function}
+
+	\begin{itemize}
+		\item Optimizes
+		\begin{equation}
+			\frac{1}{T} \sum_t \max \left( 0, -y_t (\vec w \cdot x_t)\right)
+		\end{equation}
+		\item Convex but not differentiable
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Margin and Errors}
+
+
+\begin{columns}
+	\column{.5\linewidth}
+		\only<1>{\gfx{margin}{.8}}
+		\only<2>{\gfx{error}{.8}}
+	\column{.5\linewidth}
+
+	\begin{itemize}
+		\item If there's a good margin $\rho$, you'll converge quickly
+		\pause
+		\item Whenever you se an error, you move the classifier to get it right
+		\item Convergence only possible if data are separable
+	\end{itemize}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{How many errors does Perceptron make?}
+
+	\begin{itemize}
+		\item If your data are in a $R$ ball and there is a margin
+		\begin{equation}
+		\rho \leq \frac{y_t (\vec v \cdot \vec x_t)}{||v||}
+		\end{equation}
+		for some $\vec v$, then the number of mistakes is bounded by $R^2/\rho^2$
+		\item The places where you make an error are support vectors
+		\item Convergence can be slow for small margins
+	\end{itemize}
+
+\end{frame}
+
+
+\section{Online Perceptron for Structure Learning}
+
+
+\begin{frame}{Binary to Structure}
+
+	\only<1>{\gfx{bin_to_struc_0}{1.0}}
+	\only<2>{\gfx{bin_to_struc_1}{1.0}}
+	\only<3>{\gfx{bin_to_struc_2}{1.0}}
+
+\end{frame}
+
+
+
+\begin{frame}{Generic Perceptron}
+
+\begin{itemize}
+
+\item perceptron is the simplest machine learning algorithm
+\item online-learning: one example at a time
+\item learning by doing
+\begin{itemize}
+\item find the best output under the current weights
+\item update weights at mistakes
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Structured Perceptron}
+
+\gfx{struc_perceptron}{1.0}
+
+\end{frame}
+
+
+\begin{frame}{Perceptron Algorithm}
+
+\gfx{perceptron_algorithm}{1.0}
+
+\end{frame}
+
+
+\begin{frame}{POS Example}
+
+\gfx{pos_example}{1.0}
+
+\end{frame}
+
+\begin{frame}{What must be true?}
+
+\begin{itemize}
+	\item Finding highest scoring structure must be really fast (you'll do it often)
+	\item Requires some sort of dynamic programming algorithm
+	\item For tagging: features must be local to $y$ (but can be global to $x$)
+\end{itemize}
+
+\gfx{feature_scope}{1.0}
+
+\end{frame}
+
+\begin{frame}{Averaging is Good}
+
+	\only<1>{\gfx{averaged_perceptron}{1.0}}
+	\only<2>{\gfx{averaged_results}{.7}}
+
+\end{frame}
+
+
+\begin{frame}{Smoothing}
+	\begin{itemize}
+		\item Must include subset templates for features
+		\item For example, if you have feature $(t_0, w_0, w_{-1})$, you must also have
+		\begin{itemize}
+			\item $(t_0, w_0)$; $(t_0, w_{-1})$; $(w_0, w_{-1})$
+		\end{itemize}
+
+	\end{itemize}
+\end{frame}
+
+\end{document}
