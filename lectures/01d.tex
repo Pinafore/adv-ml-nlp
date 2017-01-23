@@ -1,0 +1,301 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{online/#1}
+\end{center}
+}
+\title{Why Language is Hard: Structure and Predictions (Description)}
+\date{Slides adapted from Liang Huang}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+\begin{frame}{Perceptron Algorithm}
+
+	\begin{itemize}
+		\item Can we find parameters to minimize errors?
+                \item Rather than just counting up how often we see events?
+		\item Very similar to logistic regression (but 0/1 loss)
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{$k$-means}
+\begin{algorithmic}[1]
+\State $\vec w_1 \gets \vec 0$
+ \For{$t \leftarrow 1 \dots T$}
+  \State Receive $x_t$
+  \State $\hat y_t \gets $ sgn$(\vec w_t \cdot \vec x_t)$
+  \State Receive $y_t$
+  \If{$\hat y_t \not = y_t$}
+   \State $\vec w_{t+1} \gets \vec w_t + y_t \vec x_t $
+   \Else
+   \State $\vec w_{t+1} \gets w_t$
+   \EndIf
+ \EndFor
+\Return $w_{T+1}$
+\end{algorithmic}
+
+
+\end{frame}
+
+
+\begin{frame}{Binary to Structure}
+
+	\only<1>{\gfx{bin_to_struc_0}{1.0}}
+	\only<2>{\gfx{bin_to_struc_1}{1.0}}
+	\only<3>{\gfx{bin_to_struc_2}{1.0}}
+
+\end{frame}
+
+
+
+\begin{frame}{Generic Perceptron}
+
+\begin{itemize}
+
+\item perceptron is the simplest machine learning algorithm
+\item online-learning: one example at a time
+\item learning by doing
+\begin{itemize}
+\item find the best output under the current weights
+\item update weights at mistakes
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{2D Example}
+
+	Initially, weight vector is zero:
+	\begin{equation}
+		\vec w_1 = \langle 0, 0 \rangle
+	\end{equation}
+
+\end{frame}
+
+\begin{frame}{Observation 1}
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\gfx{perceptron_ex_1}{.9}
+	\column{.4\linewidth}
+	\begin{center}
+	\begin{align}
+		x_1 = & \langle -2, 2 \rangle \\
+		\hat y_1 = & 0 \\
+		y_1 = & +1
+	\end{align}
+	\end{center}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Update 1}
+
+	\begin{align}
+		\vec w_{t+1} & \leftarrow \vec w_t + y_t \vec x_t \\
+		\vec w_{2} & \leftarrow  \only<2->{\langle 0, 0 \rangle + \langle -2, 2 \rangle \\}
+		\only<3->{\vec w_{2} & = \langle -2, 2 \rangle}
+	\end{align}
+
+\end{frame}
+
+\begin{frame}{Observation 2}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\only<1>{\gfx{perceptron_ex_2}{.9}}
+	\only<2->{\gfx{perceptron_ex_3}{.9}}
+	\column{.4\linewidth}
+	\only<2->{
+	\begin{center}
+	\begin{align}
+		x_2 = & \langle -2, -3 \rangle \\
+		\hat y_2 = & +4 + -6 = -2 \\
+		y_2 = & -1
+	\end{align}
+	\end{center}
+	}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}{Update 2}
+
+	\begin{align}
+		\vec w_{t+1} & \leftarrow \vec w_t  \\
+		\vec w_{2} & \leftarrow  \only<2->{\langle -2, 2 \rangle \\}
+		\only<3->{\vec w_{2} & = \langle -2, 2 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Observation 3}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\only<1>{\gfx{perceptron_ex_4}{.9}}
+	\only<2->{\gfx{perceptron_ex_5}{.9}}
+	\column{.4\linewidth}
+	\only<2->{
+	\begin{center}
+	\begin{align}
+		x_3 = & \langle 2, -1 \rangle \\
+		\hat y_3 = & -4 + -2 = -6 \\
+		y_3 = & +1
+	\end{align}
+	\end{center}
+	}
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Update 3}
+
+	\begin{align}
+		\vec w_{t+1} & \leftarrow \vec w_t + y_t \vec x_t \\
+		\vec w_{3} & \leftarrow  \only<2->{\langle -2, 2 \rangle + \langle 2, -1 \rangle \\}
+		\only<3->{\vec w_{3} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Observation 4}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\only<1>{\gfx{perceptron_ex_6}{.9}}
+	\only<2->{\gfx{perceptron_ex_7}{.9}}
+	\column{.35\linewidth}
+	\only<2->{
+	\begin{center}
+	\begin{align}
+		x_4 = & \langle 1, -4 \rangle \\
+		\hat y_4 = & -4 \\
+		y_4 = & -1
+	\end{align}
+	\end{center}
+	}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}{Update 4}
+
+	\begin{align}
+		\vec w_{4} & \leftarrow  \only<2->{\vec w_3 \\}
+		\only<3->{\vec w_{4} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Observation 5}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\gfx{perceptron_ex_8}{.9}
+	\column{.35\linewidth}
+
+	\begin{center}
+	\begin{align}
+		x_5 = & \langle 2, 2 \rangle \\
+		\hat y_5 = & 2 \\
+		y_5 = & +1
+	\end{align}
+	\end{center}
+
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Update 5}
+
+	\begin{align}
+		\vec w_{5} & \leftarrow  \only<2->{\vec w_4 \\}
+		\only<3->{\vec w_{5} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+\begin{frame}{Observation 6}
+
+
+	\begin{columns}
+	\column{.6\linewidth}
+	\gfx{perceptron_ex_9}{.9}
+	\column{.35\linewidth}
+
+	\begin{center}
+	\begin{align}
+		x_6 = & \langle 2, 2 \rangle \\
+		\hat y_6 = & 2 \\
+		y_6 = & +1
+	\end{align}
+	\end{center}
+
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Update 6}
+
+	\begin{align}
+		\vec w_{6} & \leftarrow  \only<2->{\vec w_5 \\}
+		\only<3->{\vec w_{6} & = \langle 0, 1 \rangle}
+	\end{align}
+
+\end{frame}
+
+
+\begin{frame}{Structured Perceptron}
+
+\gfx{struc_perceptron}{1.0}
+
+\end{frame}
+
+
+\begin{frame}{Perceptron Algorithm}
+
+\gfx{perceptron_algorithm}{1.0}
+
+\end{frame}
+
+
+\begin{frame}{POS Example}
+
+\gfx{pos_example}{1.0}
+
+\end{frame}
+
+\begin{frame}{What must be true?}
+
+\begin{itemize}
+	\item Finding highest scoring structure must be really fast (you'll do it often)
+	\item Requires some sort of dynamic programming algorithm
+	\item For tagging: features must be local to $y$ (but can be global to $x$)
+\end{itemize}
+
+\gfx{feature_scope}{1.0}
+
+\end{frame}
+
+\end{document}
