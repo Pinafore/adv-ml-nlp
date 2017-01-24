@@ -1,0 +1,165 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{online/#1}
+\end{center}
+}
+\title{Structured Perceptron}
+\date{Hands-On Demo}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+
+\begin{frame}{ Problem setup }
+
+  \begin{itemize}
+    \item Restricted set of POS tags: adjective, preposition, verb,
+      determiner, noun
+    \item We first have sentence ``time flies like an arrow'' with
+      true POS sequence N V P D N
+    \item Features are $(z_i, z_{i+1}), (z_i, w_i)$
+    \item What's a maximum violation POS sequence?
+    \pause
+    \item Can do on paper because search is tractable
+    \pause
+    \item So we're all on the same page, let's all use A A A A A
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\begin{itemize}
+\item Correct answer: N V P D N
+\item Prediction: \alert<2>{A} \alert<2>{A} \alert<2>{A} \alert<2>{A} \alert<2>{A}\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(P,~D) (N,~arrow) (D,~an) (N,~time) (V,~P) (P,~like) (V,~flies) (START,~N) (D,~N) (N,~V) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+\end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(A,~arrow) (A,~A) (A,~an) (A,~like) (START,~A) (A,~flies) (A,~time) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: \alert<5>{(A,~A)}:~-4.00; \alert<5>{(A,~an)}:~-1.00; \alert<5>{(A,~arrow)}:~-1.00; \alert<5>{(A,~flies)}:~-1.00; \alert<5>{(A,~like)}:~-1.00; \alert<5>{(A,~time)}:~-1.00; \alert<5>{(D,~N)}:~1.00; \alert<5>{(D,~an)}:~1.00; \alert<5>{(N,~V)}:~1.00; \alert<5>{(N,~arrow)}:~1.00; \alert<5>{(N,~time)}:~1.00; \alert<5>{(P,~D)}:~1.00; \alert<5>{(P,~like)}:~1.00; \alert<5>{(V,~P)}:~1.00; \alert<5>{(V,~flies)}:~1.00; \alert<5>{(START,~A)}:~-1.00; \alert<5>{(START,~N)}:~1.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}{Decoding Sentence 2}
+
+\small
+
+\only<2>{$w_{\mbox{START, A}} + w_{\mbox{A, fruit}} = -1.00 + 0.00 = \alert<2>{-1.00}$}
+\only<3>{$w_{\mbox{START, P}} + w_{\mbox{P, fruit}} = 0.00 + 0.00 = \alert<3>{0.00}$}
+\only<4>{$w_{\mbox{START, V}} + w_{\mbox{V, fruit}} = 0.00 + 0.00 = \alert<4>{0.00}$}
+\only<5>{$w_{\mbox{START, D}} + w_{\mbox{D, fruit}} = 0.00 + 0.00 = \alert<5>{0.00}$}
+\only<6>{$w_{\mbox{START, N}} + w_{\mbox{N, fruit}} = 1.00 + 0.00 = \alert<6>{1.00}$}
+\only<7>{$\delta_0(N) + w_{\mbox{N, A}} + w_{\mbox{A, flies}} = 1.00 + 0.00 + -1.00 = \alert<7>{0.00}$}
+\only<8>{$\delta_0(N) + w_{\mbox{N, P}} + w_{\mbox{P, flies}} = 1.00 + 0.00 + 0.00 = \alert<8>{1.00}$}
+\only<9>{$\delta_0(N) + w_{\mbox{N, V}} + w_{\mbox{V, flies}} = 1.00 + 1.00 + 1.00 = \alert<9>{3.00}$}
+\only<10>{$\delta_0(P) + w_{\mbox{P, D}} + w_{\mbox{D, flies}} = 0.00 + 1.00 + 0.00 = \alert<10>{1.00}$}
+\only<11>{$\delta_0(N) + w_{\mbox{N, N}} + w_{\mbox{N, flies}} = 1.00 + 0.00 + 0.00 = \alert<11>{1.00}$}
+\only<12>{$\delta_1(V) + w_{\mbox{V, A}} + w_{\mbox{A, like}} = 3.00 + 0.00 + -1.00 = \alert<12>{2.00}$}
+\only<13>{$\delta_1(V) + w_{\mbox{V, P}} + w_{\mbox{P, like}} = 3.00 + 1.00 + 1.00 = \alert<13>{5.00}$}
+\only<14>{$\delta_1(V) + w_{\mbox{V, V}} + w_{\mbox{V, like}} = 3.00 + 0.00 + 0.00 = \alert<14>{3.00}$}
+\only<15>{$\delta_1(V) + w_{\mbox{V, D}} + w_{\mbox{D, like}} = 3.00 + 0.00 + 0.00 = \alert<15>{3.00}$}
+\only<16>{$\delta_1(V) + w_{\mbox{V, N}} + w_{\mbox{N, like}} = 3.00 + 0.00 + 0.00 = \alert<16>{3.00}$}
+\only<17>{$\delta_2(P) + w_{\mbox{P, A}} + w_{\mbox{A, an}} = 5.00 + 0.00 + -1.00 = \alert<17>{4.00}$}
+\only<18>{$\delta_2(P) + w_{\mbox{P, P}} + w_{\mbox{P, an}} = 5.00 + 0.00 + 0.00 = \alert<18>{5.00}$}
+\only<19>{$\delta_2(P) + w_{\mbox{P, V}} + w_{\mbox{V, an}} = 5.00 + 0.00 + 0.00 = \alert<19>{5.00}$}
+\only<20>{$\delta_2(P) + w_{\mbox{P, D}} + w_{\mbox{D, an}} = 5.00 + 1.00 + 1.00 = \alert<20>{7.00}$}
+\only<21>{$\delta_2(P) + w_{\mbox{P, N}} + w_{\mbox{N, an}} = 5.00 + 0.00 + 0.00 = \alert<21>{5.00}$}
+\only<22>{$\delta_3(D) + w_{\mbox{D, A}} + w_{\mbox{A, apple}} = 7.00 + 0.00 + 0.00 = \alert<22>{7.00}$}
+\only<23>{$\delta_3(D) + w_{\mbox{D, P}} + w_{\mbox{P, apple}} = 7.00 + 0.00 + 0.00 = \alert<23>{7.00}$}
+\only<24>{$\delta_3(D) + w_{\mbox{D, V}} + w_{\mbox{V, apple}} = 7.00 + 0.00 + 0.00 = \alert<24>{7.00}$}
+\only<25>{$\delta_3(D) + w_{\mbox{D, D}} + w_{\mbox{D, apple}} = 7.00 + 0.00 + 0.00 = \alert<25>{7.00}$}
+\only<26>{$\delta_3(D) + w_{\mbox{D, N}} + w_{\mbox{N, apple}} = 7.00 + 1.00 + 0.00 = \alert<26>{8.00}$}
+\begin{itemize}
+	\item Scores
+
+\begin{equation}
+\delta = \bordermatrix{&\mbox{fruit}_{0}	&\mbox{flies}_{1}	&\mbox{like}_{2}	&\mbox{an}_{3}	&\mbox{apple}_{4}\cr
+A	&\only<2->{\alert<2>{-1.00}}	&\only<7->{\alert<7>{0.00}}	&\only<12->{\alert<12>{2.00}}	&\only<17->{\alert<17>{4.00}}	&\only<22->{\alert<22>{7.00}}	&\cr
+P	&\only<3->{\alert<3>{0.00}}	&\only<8->{\alert<8>{1.00}}	&\only<13->{\alert<13>{5.00}}	&\only<18->{\alert<18>{5.00}}	&\only<23->{\alert<23>{7.00}}	&\cr
+V	&\only<4->{\alert<4>{0.00}}	&\only<9->{\alert<9>{3.00}}	&\only<14->{\alert<14>{3.00}}	&\only<19->{\alert<19>{5.00}}	&\only<24->{\alert<24>{7.00}}	&\cr
+D	&\only<5->{\alert<5>{0.00}}	&\only<10->{\alert<10>{1.00}}	&\only<15->{\alert<15>{3.00}}	&\only<20->{\alert<20>{7.00}}	&\only<25->{\alert<25>{7.00}}	&\cr
+N	&\only<6->{\alert<6>{1.00}}	&\only<11->{\alert<11>{1.00}}	&\only<16->{\alert<16>{3.00}}	&\only<21->{\alert<21>{5.00}}	&\only<26->{\alert<26>{8.00}}	&\cr
+}\end{equation}
+
+\only<27->{
+\item Backpointers
+\begin{equation}
+\beta = \bordermatrix{&\mbox{flies}_{1}	&\mbox{like}_{2}	&\mbox{an}_{3}	&\mbox{apple}_{4}\cr
+\mbox{A}&	N&	V&	P&	D\cr
+\mbox{P}&	N&	\alert<28>{V}&	P&	D\cr
+\mbox{V}&	\alert<28>{N}&	V&	P&	D\cr
+\mbox{D}&	P&	V&	\alert<28>{P}&	D\cr
+\mbox{N}&	N&	V&	P&	\alert<28>{D}\cr
+}\end{equation}
+}
+\only<29->{
+\item Reconstruction: N V P D N}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+\begin{frame}
+\begin{itemize}
+\item Old feature vector: (A,~A):~-4.00; (A,~an):~-1.00; (A,~arrow):~-1.00; (A,~flies):~-1.00; (A,~like):~-1.00; (A,~time):~-1.00; (D,~N):~1.00; (D,~an):~1.00; (N,~V):~1.00; (N,~arrow):~1.00; (N,~time):~1.00; (P,~D):~1.00; (P,~like):~1.00; (V,~P):~1.00; (V,~flies):~1.00; (START,~A):~-1.00; (START,~N):~1.00
+\item Correct answer: A N V D N
+\item Prediction: \alert<2>{N} \alert<2>{V} \alert<2>{P} D N\only<3->{\begin{columns}
+\column{.3\linewidth}
+\begin{block}{Gold Features}
+(V,~D) (A,~N) (A,~fruit) (V,~like) (START,~A) (N,~flies) \end{block}
+\column{.3\linewidth}
+\begin{block}{Shared Features}
+(D,~an) (N,~V) (N,~apple) (D,~N) \end{block}
+\column{.3\linewidth}
+\begin{block}{Predicted Features}
+(P,~D) (V,~P) (P,~like) (V,~flies) (START,~N) (N,~fruit) \end{block}
+\end{columns}
+}\only<4->{
+\item New feature vector: (A, A): -4.00; \alert<5>{(A,~N)}:~1.00; (A,
+  an): -1.00; (A, arrow): -1.00; (A, flies): -1.00;
+  \alert<5>{(A,~fruit)}:~1.00; (A, like): -1.00; (A, time): -1.00; (D,
+  N): 1.00; (D, an): 1.00; (N, V): 1.00; (N, arrow): 1.00;
+  \alert<5>{(N,~flies)}:~1.00; \alert<5>{(N,~fruit)}:~-1.00; (N,
+  time): 1.00; \alert<5>{(V,~D)}:~1.00; \alert<5>{(V,~like)}:~1.00}; \alert<5>{(P,~D):~0.00}
+\end{itemize}
+\end{frame}
+%-----------------------
+
+
+
+\begin{frame}{Wrapup}
+
+  \begin{itemize}
+    \item Not just for POS tagging: parsing, machine translation
+    \item Hard to overstate how important features $\vec \Phi$ are
+    \item Next time: can we get algorithm to find features for us?
+      \pause
+    \item Project ideas:
+      \begin{itemize}
+        \item Deep learning of features
+        \item Applying perceptron to your favorite problem, designing
+          great features
+        \item Efficient data structures for finding max violation
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+\end{document}

@@ -16,17 +16,29 @@
 \titlepage
 }
 
+\begin{frame}{How do we set the feature weights?}
+
+  \begin{itemize}
+    \item Goal is to minimize errors
+    \item Want to reward features that lead to right answers
+    \item Penalize features that lead to wrong answers
+    \item Problem: predictions are correlated
+  \end{itemize}
+
+\end{frame}
+
+
 \begin{frame}{Perceptron Algorithm}
 
 	\begin{itemize}
-		\item Can we find parameters to minimize errors?
-                \item Rather than just counting up how often we see events?
-		\item Very similar to logistic regression (but 0/1 loss)
+                \item Rather than just counting up how often we see
+                  events?
+                 \item We'll use this for intuition in 2D case
 	\end{itemize}
 
 \end{frame}
 
-\begin{frame}{$k$-means}
+\begin{frame}{Perceptron Algorithm}
 \begin{algorithmic}[1]
 \State $\vec w_1 \gets \vec 0$
  \For{$t \leftarrow 1 \dots T$}
@@ -286,16 +298,5 @@
 
 \end{frame}
 
-\begin{frame}{What must be true?}
-
-\begin{itemize}
-	\item Finding highest scoring structure must be really fast (you'll do it often)
-	\item Requires some sort of dynamic programming algorithm
-	\item For tagging: features must be local to $y$ (but can be global to $x$)
-\end{itemize}
-
-\gfx{feature_scope}{1.0}
-
-\end{frame}
 
 \end{document}
