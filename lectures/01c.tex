@@ -1,0 +1,205 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{online/#1}
+\end{center}
+}
+\title{Why Language is Hard: Structure and Predictions}
+\date{Slides adapted from Liang Huang}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+
+\begin{frame}{POS Tagging: Task Definition}
+
+\begin{itemize}
+\item Annotate each word in a sentence with a part-of-speech marker.
+\item Lowest level of syntactic analysis.
+
+\begin{scriptsize}
+\begin{tabular}{cccccccccccc}
+John  & saw &  the &  saw &  and & decided & to & take & it &    to &  the  & table \\
+NNP & VBD & DT & NN & CC & VBD  &   TO &VB & PRP &IN &DT  &  NN
+\end{tabular}
+\end{scriptsize}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Typical Features ($\phi$)}
+
+Assume $K$ parts of speech, a lexicon size of $V$, a series of observations $\{x_1, \dots, x_N\}$, and a series of unobserved states $\{z_1, \dots, z_N\}$.
+
+\begin{itemize}
+  \item[$\pi$] Start state scores (vector of length $K$):
+    $\pi_i\popshow{9}{ = \log p(z_1 = i)}$
+  \item[$\theta$] Transition matrix (matrix of size $K$ by $K$):
+    $\theta_{i,j}\popshow{10}{ = \log p(z_{n} = j | z_{n-1} = i)}$
+  \item[$\beta$] An emission matrix (matrix of size $K$ by $V$): $\beta_{j,w} \popshow{11}{ = \log  p(x_n = w | z_n=j)}$
+\end{itemize}
+
+\only<2->{
+
+\begin{block}{Score}
+\begin{equation}
+  \alert<3>{f(x, z)} \equiv \sum_i \alert<4>{w_i} \alert<5>{\phi_i(x, z)}
+\end{equation}
+\only<3>{Total score of hypothesis $z$ given input $x$}
+\only<4>{Feature weight}
+\only<5>{Feature present (binary)}
+\end{block}
+
+}
+
+\only<6->{
+
+Two problems: How do we move from data to algorithm?
+(Estimation\only<7->{: \alert<7-8>{HMM}}) How do we move from a model and unlabled data to labeled data? (Inference)
+
+}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Viterbi Algorithm}
+
+\begin{itemize}
+\item Given an unobserved sequence of length $L$, $\{x_1, \dots, x_L\}$, we want to find a sequence $\{z_1 \dots z_L\}$ with the highest score.
+\pause
+\item It's impossible to compute $K^L$ possibilities.
+\item So, we use dynamic programming to compute most likely tags for
+  each token subsequence from $0$ to $t$ that ends in state $k$.
+\item Memoization: fill a table of solutions of sub-problems
+\item Solve larger problems by composing sub-solutions
+\item Base case:
+\begin{equation}
+f_1(k) = \pi_k + \beta_{k, x_i}
+\end{equation}
+\item Recursion:
+\begin{equation}
+f_n(k) = \max_{\alert<3>{j}}
+{\left(f_{n-1}(j)\alert<4>{+ \theta_{j,k}}\right)} \alert<5>{+ \beta_{k, x_n}}\end{equation}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{itemize}
+\item The complexity of this is now $K^2 L$.
+\item In class: example that shows why you need all $O(KL)$ table cells (garden pathing)
+\item But just computing the max isn't enough.  We also have to remember where we came from.  (Breadcrumbs from best previous state.)
+\begin{equation}
+\Psi_{n} = \mbox{argmax}_j f_{n-1}(j) + \theta_{j,k}
+\end{equation}
+\pause
+\item Let's do that for the sentence ``come and get it''
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+POS  & $\pi_k$ & $\beta_{k,x_1}$&  $ f_1(k)$ \\
+\hline
+MOD  & $\log 0.234$ & $\log 0.024$ & -5.18 \\
+DET   & $\log 0.234$ & $\log 0.032$ & -4.89 \\
+CONJ  & $\log 0.234$ & $\log 0.024$ & -5.18\\
+N   & $\log 0.021$ & $\log 0.016$ & -7.99 \\
+PREP & $\log 0.021$ & $\log 0.024$ & -7.59 \\
+PRO  & $\log 0.021$ & $\log 0.016$ & -7.99 \\
+V  & $\log 0.234$ & $\log 0.121$ & -3.56 \\
+\hline
+\multicolumn{4}{c}{{\bf come} and get it (with HMM probabilities)}
+\end{tabular}
+
+\end{center}
+
+Why logarithms?
+\begin{enumerate}
+\item More interpretable than a float with lots of zeros.
+\item Underflow is less of an issue
+\item Generalizes to linear models (next!)
+\item Addition is cheaper than multiplication
+  \begin{equation}
+    log(ab) = log(a) + log(b)
+  \end{equation}
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+POS  & $f_1(j) $ & \uncover<3->{$f_1(j) + \theta_{j, \mbox{CONJ}}$} & $f_2(\mbox{CONJ})$ \\
+\hline
+MOD  & -5.18 & \uncover<7->{-8.48} & \\
+DET   &  -4.89 & \uncover<7->{-7.72} & \\
+CONJ  & -5.18 & \uncover<7->{-8.47}  & \color{red}{\uncover<2-8>{???}  \uncover<11>{-6.02}}\\
+N   & -7.99 & \uncover<6->{$\leq -7.99$} &  \\
+PREP & -7.59 & \uncover<6->{$\leq -7.59$} & \\
+PRO  & -7.99 & \uncover<6->{$\leq -7.99$} & \\
+V  & -3.56 & \uncover<5->{\color<8->{green}{-5.21}} & \\
+\hline
+\multicolumn{4}{c}{ come {\bf and} get it}
+\end{tabular}
+
+
+
+
+\end{center}
+
+\uncover<4>{
+\begin{equation}
+f_0(\mbox{V}) + \theta_{\mbox{V, CONJ}} = f_0(k) + \theta_{\mbox{V, CONJ}} = -3.56 + -1.65 \nonumber
+\end{equation}
+}
+
+\uncover<9-10>{
+\begin{equation}
+\log{f_1(k)} = -5.21 + \beta_{\mbox{CONJ, and}} = \uncover<10>{-5.21-0.64}\nonumber
+\end{equation}
+}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+\footnotesize{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+POS  & $ f_1(k) $ & $f_2(k) $ & $b_2$ & $f_3(k) $ & $b_3$ & $f_4(k)$ & $b_4$ \\
+\hline
+MOD  & \color{gray}{-5.18} & \uncover<2->{\color{gray}{-0.00}} & \uncover<2->{\color{gray}{X}} & \uncover<3->{\color{gray}{-0.00}} & \uncover<3->{\color{gray}{X}} & \uncover<4->{\color{gray}{-0.00}} & \uncover<4->{\color{gray}{X}} \\
+DET   & \color{gray}{-4.89} & \uncover<2->{\color{gray}{-0.00}} & \uncover<2->{\color{gray}{X}}  & \uncover<3->{\color{gray}{-0.00}} & \uncover<3->{\color{gray}{X}} & \uncover<4->{\color{gray}{-0.00}} & \uncover<4->{\color{gray}{X}} \\
+CONJ  & \color{gray}{-5.18} & -6.02 & V & \uncover<3->{\color{gray}{-0.00}} & \uncover<3->{\color{gray}{X}} & \uncover<4->{\color{gray}{-0.00}} & \uncover<4->{\color{gray}{X}} \\
+N   & \color{gray}{-7.99} & \uncover<2->{\color{gray}{-0.00}} & \uncover<2->{\color{gray}{X}} & \uncover<3->{\color{gray}{-0.00}} & \uncover<3->{\color{gray}{X}}  & \uncover<4->{\color{gray}{-0.00}} & \uncover<4->{\color{gray}{X}} \\
+PREP & \color{gray}{-7.59} & \uncover<2->{\color{gray}{-0.00}} & \uncover<2->{\color{gray}{X}} & \uncover<3->{\color{gray}{-0.00}} & \uncover<3->{\color{gray}{X}}   & \uncover<4->{\color{gray}{-0.00}} & \uncover<4->{\color{gray}{X}} \\
+PRO  & \color{gray}{-7.99} & \uncover<2->{\color{gray}{-0.00}} & \uncover<2->{\color{gray}{X}} & \uncover<3->{\color{gray}{-0.00}} & \uncover<3->{\color{gray}{X}}  &  \uncover<4->{-14.6} &  \uncover<4->{V}  \\
+V  & -3.56 & \uncover<2->{\color{gray}{-0.00}} & \uncover<2->{\color{gray}{X}}  &  \uncover<3->{-9.03} &  \uncover<3->{CONJ} & \uncover<4->{\color{gray}{-0.00}} & \uncover<4->{\color{gray}{X}} \\
+\hline
+WORD & come & \multicolumn{2}{c|}{and} & \multicolumn{2}{c|}{get} & \multicolumn{2}{c|}{it} \\
+\hline
+\end{tabular}}
+\end{center}
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,90 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{online/#1}
+\end{center}
+}
+\title{Why Language is Hard: Structure and Predictions}
+\date{Introduction}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+\begin{frame}{Today}
+
+  \begin{itemize}
+    \item What's special about machine learning for NLP
+    \item Layout of the course
+    \item Administrivia
+    \item Perceptron
+    \item Structured Perceptron
+      \pause
+      \begin{enumerate}
+    \item Good ML analysis, standard NLP problem
+    \item Often ignored in both classes (except when I teach it)
+    \item Uses structure and representation
+      \end{enumerate}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Most supervised algorithms are \dots}
+
+\begin{columns}
+  \column{.5\linewidth}
+  \begin{block}{Logistic Regression}
+    \pause
+    $p(y \g x) = \sigma(\sum_i \beta_i x_i)$
+  \end{block}
+
+  \column{.5\linewidth}
+  \begin{block}{SVM}
+    \pause
+    $\mbox{sign}(\vec w \cdot x + b)$
+  \end{block}
+\end{columns}
+
+\begin{itemize}
+  \item What statistical property do these (and many others share)?
+    \pause
+   \item Hint: $p(y_i,y_j \g x_i, x_j) = p(y_i \g x_i) p(y_j \g x_j)$
+     \pause
+    \item Independent!
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Is this how the world works?}
+
+  \gfx{sequences}{0.6}
+  \pause
+  Also particularly relevant for 2016: correlated voting patterns
+
+\end{frame}
+
+
+\begin{frame}{Why is this ML class different from all other ML classes?}
+
+\begin{itemize}
+  \item NLP has very specific applications
+  \item NLP has very specific ML problems
+  \item Much of the skills you need to do ML well are domain-specific
+  \item Culture in ML for NLP research is slightly different than
+    vanilla ML
+    \begin{itemize}
+      \item Cleverness is not enough
+      \item Good baselines are important
+      \item Simple is usually better
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+\end{document}
