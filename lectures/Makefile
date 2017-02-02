@@ -6,7 +6,7 @@ clean:
 
 02: 02a.pdf 02b.pdf 02c.pdf 02d.pdf
 
-03: 03a.pdf 03b.pdf 03c.pdf
+03: 03a.pdf 03b.pdf 03c.pdf 03d.pdf
 
 %.pdf: %.tex
 	pdflatex -shell-escape $*

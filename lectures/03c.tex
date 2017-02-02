@@ -26,99 +26,83 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{What's wrong with PMI?}
 
-\begin{itemize}
-  \item PMI-based methods prefer rare words
-  \item E.g., closest to ``king''
-    \gfx{king}{.8}
-  \item Jeongjo (Koryo), Adulyadej (Chakri), Coretta (MLK)
-  \item Hard to scale
-  \item Doesn't work as well?
-\end{itemize}
+\begin{frame}{Beyond word2vec}
+
+    \begin{itemize}
+        \item word2vec is factorizing a word-context matrix.
+        \item The content of this matrix affects the resulting similarities.
+        \item word2vec allows you to specify a \textit{window size}.
+        \item But what about other types of contexts?
+    \end{itemize}
+
+    \begin{itemize}
+        \item Example: \textbf{dependency contexts} {\footnotesize (Levy and
+            Dagan, ACL 2014)}
+    \end{itemize}
+
+\end{frame}
+
+{
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages=-]{distsim/dep_embeddings.pdf}
+}
+
+\begin{frame}{Context matters}
+
+    \begin{block}{Choose the correct contexts for your application}
+        \begin{itemize}
+            \item larger window sizes -- more topical
+            \item dependency relations -- more functional
+                \pause
+            \item only noun-adjective relations
+%                \scalebox{0.8}{
+%                \begin{tabular}{cc}
+%                    & \textbf{all dependencies} \\
+%                            \hline
+%                                   \textbf{sandwich}:
+%                                   & satay, sandwiches, ravioli, doughnut, dessert, \\
+%                                   & casserole, steak, shortbread, omelette, risotto \\
+%                           \hline
+%                           & \textbf{only noun-adj dependencies} \\
+%                           \hline
+%                                \textbf{sandwich}:
+%                                & pizza, sandwiches, pan, pastry, doughnut \\
+%                                & biscuit, doughnuts, burger, dessert, pies \\
+%                            \end{tabular}}
+%                \pause
+            \item only verb-subject relations
+                \pause
+            \item context: time of the current message
+            \item context: user who wrote the message
+                \pause
+            \item \ldots
+            \item the sky is the limit
+        \end{itemize}
+    \end{block}
 
 \end{frame}
 
 
-\begin{frame}{Hyperparameters Matter}
-
-\begin{itemize}
-\item Preprocessing				(word2vec)
-\begin{itemize}
-\item \alert<2>{Dynamic Context Windows}
-\item Subsampling
-\item Deleting Rare Words
-\end{itemize}
-
-Postprocessing				(GloVe)
-\begin{itemize}
-\item \alert<2>{Adding Context Vectors}
-\end{itemize}
-
-Association Metric			(SGNS)
-\begin{itemize}
-\item Shifted PMI
-\item \alert<2>{Context Distribution Smoothing}
-\end{itemize}
-
-\end{itemize}
-
-
-
+\begin{frame}{Summary}
+    \begin{block}{Distributional Semantics}
+        \begin{itemize}
+            \item Words in similar contexts have similar meanings.
+            \item Represent a word by the contexts it appears in.
+            \item But what is a context?
+        \end{itemize}
+    \end{block}
+    \begin{block}{Neural Models (word2vec)}
+        \begin{itemize}
+            \item Represent each word as dense, low-dimensional vector.
+            \item Same intuitions as in distributional vector-space models.
+            \item Efficient to run, scales well, modest memory requirement.
+            \item Dense vectors are convenient to work with.
+            \item Still helpful to think of the context types.
+        \end{itemize}
+    \end{block}
 \end{frame}
 
-\begin{frame}{Dynamic Context Windows}
-
-\gfx{window}{.95}
-
-\end{frame}
-
-\begin{frame}{Adding Context Vectors}
-
-\begin{itemize}
-  \item Skip-Gram Negative Sampling creates word vectors $w$
-  \item \dots and context vectors $c$
-  \item Pennington et al. (2014) use $w+c$ to represent word
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Smoothing}
-
-  \begin{itemize}
-      \item Introduced in word2vec for negative sampling ($\alpha=0.75$)
-      \begin{equation}
-        \hat P_\alpha(c) = \frac{ \#(c)^\alpha}{\sum_{c'} \#(c)^\alpha}
-      \end{equation}
-    \item For PMI, helps remove bias toward rare words
-    \pause
-    \item And makes it about as good as word2vec
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Rant on Evaluation}
-
-  \begin{itemize}
-    \item Analogy and Similarity aren't that useful
-    \item Find a real-world task and optimize for that
-    \item Innovation is still possible
-    \item Just getting better word vectors is a fruitless cottage industry
-    \pause
-    \item
-
-  \end{itemize}
-
-\end{frame}
-
-
-\begin{frame}{Other Languages are Harder}
-
-  \only<1>{ \gfx{hebrew-morphology}{.8}}
-  \only<2>{ \gfx{hebrew-tokenization}{.8}}
-  \only<3>{ \gfx{hebrew-senses}{.8}}
-
-\end{frame}
 
 \end{document}
 
