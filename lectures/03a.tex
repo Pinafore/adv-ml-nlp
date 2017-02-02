@@ -1,0 +1,72 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+
+\usepackage{tikz-dependency}
+%\usepackage{tikz-qtree}
+\usepackage{qtree}
+\usepackage{pdfpages}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{distsim/#1}
+\end{center}
+}
+\title{Distributional Semantics}
+\date{Slides Adapted from Yoav Goldberg and Omer Levy}
+
+\begin{document}
+
+\tikzstyle{every picture}+=[remember picture]
+
+
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Word Representation}
+
+\begin{itemize}
+  \item Last time, we saw how valuable hidden layers were for
+    representation (much more language today)
+   \item How can we use it for words?
+     \pause
+   \item How similar is ``pasta'' to ``pizza''
+   \item Computers often use one-hot representations
+   \item Or fragile knowledge bases
+     \pause
+     \item Distributional Hypothesis (Harris, 1954; Firth, 1957)
+       \item Know the word by the company it keeps
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Intuition (from Boroni)}
+
+\begin{block}{}
+Marco saw a \alert<3>{furry little} \alert<2>{wampimuk} \alert<3>{hiding in the tree}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Representation}
+
+  \gfx{embedding}{0.8}
+\end{frame}
+
+\begin{frame}{Usefulness}
+
+\begin{itemize}
+  \item Multimodal
+  \item Multilingual
+  \item Useful downstream feature
+\end{itemize}
+
+
+\end{frame}
+
+\end{document}
+
+%%%% examples

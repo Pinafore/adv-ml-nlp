@@ -1,0 +1,125 @@
+\documentclass[compress]{beamer}
+
+\input{course_style}
+
+
+\usepackage{tikz-dependency}
+%\usepackage{tikz-qtree}
+\usepackage{qtree}
+\usepackage{pdfpages}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{distsim/#1}
+\end{center}
+}
+\title{Distributional Semantics}
+\date{Slides Adapted from Yoav Goldberg and Omer Levy}
+
+\begin{document}
+
+\tikzstyle{every picture}+=[remember picture]
+
+
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{What's wrong with PMI?}
+
+\begin{itemize}
+  \item PMI-based methods prefer rare words
+  \item E.g., closest to ``king''
+    \gfx{king}{.8}
+  \item Jeongjo (Koryo), Adulyadej (Chakri), Coretta (MLK)
+  \item Hard to scale
+  \item Doesn't work as well?
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Hyperparameters Matter}
+
+\begin{itemize}
+\item Preprocessing				(word2vec)
+\begin{itemize}
+\item \alert<2>{Dynamic Context Windows}
+\item Subsampling
+\item Deleting Rare Words
+\end{itemize}
+
+Postprocessing				(GloVe)
+\begin{itemize}
+\item \alert<2>{Adding Context Vectors}
+\end{itemize}
+
+Association Metric			(SGNS)
+\begin{itemize}
+\item Shifted PMI
+\item \alert<2>{Context Distribution Smoothing}
+\end{itemize}
+
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{Dynamic Context Windows}
+
+\gfx{window}{.95}
+
+\end{frame}
+
+\begin{frame}{Adding Context Vectors}
+
+\begin{itemize}
+  \item Skip-Gram Negative Sampling creates word vectors $w$
+  \item \dots and context vectors $c$
+  \item Pennington et al. (2014) use $w+c$ to represent word
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Smoothing}
+
+  \begin{itemize}
+      \item Introduced in word2vec for negative sampling ($\alpha=0.75$)
+      \begin{equation}
+        \hat P_\alpha(c) = \frac{ \#(c)^\alpha}{\sum_{c'} \#(c)^\alpha}
+      \end{equation}
+    \item For PMI, helps remove bias toward rare words
+    \pause
+    \item And makes it about as good as word2vec
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Rant on Evaluation}
+
+  \begin{itemize}
+    \item Analogy and Similarity aren't that useful
+    \item Find a real-world task and optimize for that
+    \item Innovation is still possible
+    \item Just getting better word vectors is a fruitless cottage industry
+    \pause
+    \item
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Other Languages are Harder}
+
+  \only<1>{ \gfx{hebrew-morphology}{.8}}
+  \only<2>{ \gfx{hebrew-tokenization}{.8}}
+  \only<3>{ \gfx{hebrew-senses}{.8}}
+
+\end{frame}
+
+\end{document}
+
+%%%% examples
