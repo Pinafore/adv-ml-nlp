@@ -1,0 +1,47 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{topic_models/#1}
+\end{center}
+}
+\title{Topic Models}
+\date{Overview}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+\begin{frame}{Learning the Hidden Space}
+
+  \begin{itemize}
+    \item Two major tools:
+      \begin{itemize}
+        \item Gibbs Sampling: Easier to implement, easier to understand
+        \item Variational Inference: faster, harder to implement
+      \end{itemize}
+    \item Variational shows the connections to ``deep'' models better, so it's the focus
+    \item However, would be injustice to not at least discuss Gibbs sampling
+  \end{itemize}
+
+\end{frame}
+
+%\input{topic_models/topic_models}
+\input{topic_models/gibbs_sampling}
+
+\begin{frame}
+\bibliographystyle{plain}
+\tiny
+\bibliography{bib/journal-full,bib/jbg}
+\end{frame}
+
+\end{document}

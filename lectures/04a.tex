@@ -1,0 +1,44 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{topic_models/#1}
+\end{center}
+}
+\title{Topic Models}
+\date{Overview}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+\begin{frame}{Low-Dimensional Space for Documents}
+
+  \begin{itemize}
+    \item Last time: embedding space for words
+    \item This time: embedding space for documents
+    \item Generative story
+    \item New inference techniques
+  \end{itemize}
+
+\end{frame}
+
+\input{topic_models/topic_models}
+%\input{topic_models/gibbs_sampling}
+
+\begin{frame}
+\bibliographystyle{plain}
+\tiny
+\bibliography{bib/journal-full,bib/jbg}
+\end{frame}
+
+\end{document}
