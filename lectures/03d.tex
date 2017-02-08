@@ -50,12 +50,12 @@
 \item Deleting Rare Words
 \end{itemize}
 
-Postprocessing				(GloVe)
+\item Postprocessing				(GloVe)
 \begin{itemize}
 \item \alert<2>{Adding Context Vectors}
 \end{itemize}
 
-Association Metric			(SGNS)
+\item Association Metric			(SGNS)
 \begin{itemize}
 \item Shifted PMI
 \item \alert<2>{Context Distribution Smoothing}
@@ -79,6 +79,8 @@ Association Metric			(SGNS)
   \item Skip-Gram Negative Sampling creates word vectors $w$
   \item \dots and context vectors $c$
   \item Pennington et al. (2014) use $w+c$ to represent word
+  \item Levy et al. (2015) find that data size and preprocessing
+    account for most (if not all) of difference
 \end{itemize}
 
 \end{frame}
@@ -103,7 +105,10 @@ Association Metric			(SGNS)
     \item Analogy and Similarity aren't that useful
     \item Find a real-world task and optimize for that
     \item Innovation is still possible
-    \item Just getting better word vectors is a fruitless cottage industry
+    \item Just getting better word vectors is a fruitless cottage
+      industry
+    \item Always tune baseline hyperparameters (and recognize what the
+      hyperparameters are)
   \end{itemize}
 
 \end{frame}
