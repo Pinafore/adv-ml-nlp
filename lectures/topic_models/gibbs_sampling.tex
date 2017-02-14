@@ -92,16 +92,15 @@ p(z_{d,n} = k | {\bm z}_{-d,n}, {\bm w}, \alpha, \lambda) = \frac{ p(z_{d,n} = k
 & \frac{ \int_{\theta_d} \left( \prod_{i \not = k} \theta_d^{\alpha_i + n_{d,i}
       - 1} \right)\theta_d^{\alpha_k + n_{d,k} } d\theta_d \int_{\beta_{k}}
   \left( \prod_{i \not = w_{d,n}} \beta_{k,i} ^{ \lambda_i + v_{k,i} - 1}
-  \right) \beta_{k, w_{d,n}}^{\lambda_i + v_{k,w_{d,n}} d\beta_k } { \int_{\theta_d}
+  \right) \beta_{k, w_{d,n}}^{\lambda_i + v_{k,w_{d,n}} d\beta_k }} { \int_{\theta_d}
   \left( \prod_{i} \theta_d^{\alpha_i + n_{d,i} - 1} \right) d\theta_d
   \int_{\beta_{k}}    \left( \prod_{i} \beta_{k,i} ^{ \lambda_i + v_{k,i} - 1}
-  \right) d\beta_k } = \\
+  \right) d\beta_k } = \\ \pause
 & \frac{
   \dirnum{i \not = k}{K}{\alpha_k + n_{d,k} + 1}{ \G{\sum_{i}^{K} \alpha_i +
-      n_{d,i} + 1} } \G{\alpha_k + n_{d,k}}  }
-{ \dirfunc{i}{K}{\alpha_i + n_{d,i}} }
+      n_{d,i} + 1} } \G{\alpha_k + n_{d,k}}  }{ \dirfunc{i}{K}{\alpha_i + n_{d,i}} }
 % -----------------------------------
-\frac{
+ \frac{
  \dirnum{i \not = w_{d,n}}{V}{\lambda_{w_{d,n}} + v_{k,w_{d,n}} + 1}{ \G{\sum_{i}^{V} \lambda_i + v_{k,i} + 1} } \G{\lambda_k + v_{k,w_{d,n}}}
 }{ \dirfunc{i}{V}{\lambda_i + v_{k,i}} } \\
 % -----------------------------------
