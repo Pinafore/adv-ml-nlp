@@ -1,0 +1,235 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{dpmm/#1}
+\end{center}
+}
+\title{Bayesian Non-Parametrics}
+\date{Slides adapted from Eli Bingham and Matt Dickenson}
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\titlepage
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Outline}
+\begin{enumerate}
+\item Latent feature models
+\item Finite latent feature models
+\item Beta and Indian Buffet Processes
+\item Application: Topic Models
+\end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Latent feature models}
+\begin{itemize}
+\item Feature model: $N$ items described by $K$ features
+\item Dense feature model: every feature is present in every item, e.g. PCA
+\item Sparse feature model: only some features present in each item, and we can assume feature values and presence are independent:
+    \begin{eqnarray*}
+        \mathbf{F} &=& \mathbf{A} \otimes \mathbf{Z} \\
+        P(\mathbf{F}) &=& P(\mathbf{A})P(\mathbf{Z})
+    \end{eqnarray*}
+\end{itemize}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.4]{ibp/featuremodel.png}
+\caption{Griffiths and Ghahramani (2011) Figure 3}
+\end{center}
+\end{figure}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Example}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.3]{ibp/graphical-model-gaussian.png}
+\caption{Griffiths and Ghahramani (2011) Figure 7}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.3]{ibp/ibp-example-photos.png}
+\caption{Griffiths and Ghahramani (2011) Figure 9}
+\end{center}
+\end{figure}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Motivation}
+\begin{itemize}
+\item Problem with finite latent feature model: $K$ is fixed
+\item Goal: construct nonparametric prior on $\mathbf{Z}$ so that $K$ grows with the complexity of the dataset
+\item As with DPMMs, we can try to build one by taking $K \rightarrow \infty$ in a finite feature model
+\end{itemize}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.4]{ibp/beta-bernoulli.png}
+\caption{Griffiths and Ghahramani (2011) Figure 4}
+\end{center}
+\end{figure}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Finite latent feature models}
+The basic finite distribution on $z_{i,k}$s: 
+\begin{eqnarray*}
+    \pi_k | \alpha &\sim& \text{Beta} \left(\frac{\alpha}{K}, 1 \right) \\
+    z_{i,k} | \pi_k &\sim& \text{Bernoulli}(\pi_k)
+\end{eqnarray*}
+As with DPMMs, we can marginalize out latent feature presence probabilities $\pi_k$ to obtain a distribution on matrices $\mathbf{Z} \in \left\{ 0,1 \right\}^{N \times K}$:
+\begin{eqnarray*}
+    P(\mathbf{Z}) &=& \prod_{k=1}^K \int \left( \prod_{i=1}^N P(z_{ik} | \pi_k) \right) P(\pi_k) d \pi_k \\
+    &=& \prod_{k=1}^K \frac{ \frac{\alpha}{K} \Gamma(m_k + \frac{\alpha}{K} ) \Gamma(N - m_k + 1) }{\Gamma(N + 1 + \frac{\alpha}{K}) }
+\end{eqnarray*}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{The $K \rightarrow \infty$ limit}
+\begin{itemize}
+\item $\mbox{lof}(\mathbf{Z})$ is the matrix obtained by ordering the columns of $\mathbf{Z}$ as $N$-digit binary numbers
+\item To define a probability over infinitely wide binary matrices using de Finetti's Theorem,
+we need exchangeable symmetry, so we define \emph{lof} equivalence classes by modding out column order:
+\end{itemize}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.5]{ibp/ibp-sorted.png}
+\caption{Griffiths and Ghahramani (2011) Figure 5}
+\end{center}
+\end{figure}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Indian Buffet Process}
+
+Indian Buffet Process:
+\begin{enumerate}
+\item $N$ customers enter (in sequence) a buffet restaurant with an infinite number of dishes
+\item First customer fills her plate with Poisson($\alpha$) number of dishes
+\item $i^{th}$ customer samples dishes in proportion to their popularity, with probability $\frac{m_k}{i}$, where $m_k$ is the number of previous customers who sampled dish $k$
+\item $i^{th}$ customer then samples $K^{(i)}_1 \sim \text{Poisson}(\frac{\alpha}{i})$ number of new dishes
+\end{enumerate}
+\bigskip
+Resulting probability distribution on matrices: $$P(\mathbf{Z}) = \frac{\alpha^{K_+}}{\prod_{i=1}^N K^{(i)}_1 ! } \text{exp}(\alpha H_N) \prod_{k=1}^{K_+} \frac{(N - m_k)! (m_k - 1)!}{N!} $$
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Alternative derivation: Stick-Breaking}
+
+\begin{enumerate}
+\item Recursively break (an initially unit-length) stick, breaking off a $\text{Beta}(\alpha, 1)$ portion at each step
+\item Let each portion of the ``stick'', $\pi_k$ represent the probability of each feature (sorted from largest to smallest)
+\end{enumerate}
+
+This helps to show the relation between the Dirichlet process and the IBP. The stick-breaking construction is also useful for defining inference algorithms.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Application: Topic Modeling}
+% Williamson, Wang, Heller, and Blei (2010)
+
+\begin{center}
+``The IBP Compound Dirichlet Process \\
+and its Application to Focused Topic Modeling'' \\
+Williamson, Wang, Heller, and Blei (2010)
+\end{center}
+
+Stick-breaking construction:
+
+\begin{eqnarray*}
+\mu_k \sim \text{Beta}(\alpha, 1) \\
+\pi_k = \prod_{j=1}^k \mu_j \\
+b_{m,k} \sim \text{Bernoulli}(\pi_k) 
+\end{eqnarray*}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Application: Topic Modeling}
+% Williamson, Wang, Heller, and Blei (2010)
+
+% \begin{center}
+% ``The IBP Compound Dirichlet Process \\
+% and its Application to Focused Topic Modeling'' \\
+% Williamson, Wang, Heller, and Blei (2010)
+% \end{center}
+
+Focused topic model:
+\begin{enumerate}
+\item for $k=1,2,\ldots$
+  \begin{itemize}
+  \item Sample stick length $\pi_k$
+  \item Sample relative mass $\phi_k \sim \text{Gamma}(\gamma, 1)$
+  \item Draw topic distribution over words: $\beta_k \sim \text{Dirichlet}(\eta)$
+  \end{itemize}
+\item for $m=1,\ldots,M$
+  \begin{itemize}
+  \item Sample binary vector $b_m$
+  \item Draw total number of words $n^{(m)} \sim NB(\sum_k b_{m,k} \phi_k, 1/2)$
+  \item Sample distribution over topics $\theta_m \sim \text{Dirichlet}(b_m \cdot \phi)$
+  \item For each word $w_{m,i}, i=1,\ldots,n^{(m)}$
+    \begin{enumerate}
+    \item Draw topic index $z_{m,i} \sim \text{Discrete}(\theta_m)$ 
+    \item Draw word $w_{m,i} \sim \text{Discrete}(\beta_{z_{m_i}})$
+    \end{enumerate}
+  \end{itemize}
+\end{enumerate}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Application 2: Topic Modeling}
+% Williamson, Wang, Heller, and Blei (2010)
+
+% \begin{center}
+% ``The IBP Compound Dirichlet Process \\
+% and its Application to Focused Topic Modeling'' \\
+% Williamson, Wang, Heller, and Blei (2010)
+% \end{center}
+
+An advantage of the focused topic model is that it separates the global topic proportions from the distribution over topics within a document. A rare topic within the corpus can be dominant within a document (e.g. baseball), and a frequent topic can be a small proportion of many documents.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Discussion}
+
+
+Limitations of IBP:
+\begin{enumerate}
+\item Coupling of average number of features $\alpha$ and total number of features $N\alpha$ (can be overcome with a two-parameter generalization)
+\item Computationally complex, can be time-consuming
+\end{enumerate}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.3]{ibp/two-parameter-ibp.png}
+\caption{Griffiths and Ghahramani (2011) Figure 10}
+\end{center}
+\end{figure}
+
+\end{frame}
+ 
+% End of slides
+\end{document} 

@@ -10,6 +10,8 @@ clean:
 
 04: 04a.pdf 04b.pdf
 
+05: 05a.pdf 05b.pdf 05c.pdf 05d.pdf
+
 %.pdf: %.tex
 	pdflatex -shell-escape $*
 	cp $@ ../../jbg-web/teaching/CSCI_7000

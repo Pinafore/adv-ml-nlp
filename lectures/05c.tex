@@ -1,0 +1,84 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{dpmm/#1}
+\end{center}
+}
+\title{Bayesian Non-Parametrics}
+\date{Overview}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+\begin{frame}{What about text?}
+
+  \begin{itemize}
+    \item Gaussian distributions can't model text \only<2->{[or can they?]}
+    \item So typically use multinomial distribution as the base distribution
+    \item Remember multinomial:
+      \begin{equation}
+        P(N \g n, \theta) = \frac{n!}{\prod_j N_j!} \prod_j \theta_j^{N_j}
+      \end{equation}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Dirichlet Process Multinomial Mixture Model}
+\begin{footnotesize}
+       \begin{itemize}
+		\item Break off sticks
+                  \begin{align}
+                    V_1, V_2, & \dots \sim_{\mbox{iid}} \mbox{Beta}(1,
+                    \alpha) \\
+                    C_k & \equiv V_k \prod_{j=1}^{k-1} (1 - V_k)
+                  \end{align}
+		\pause
+		\item Draw atoms
+                  \begin{equation}
+                    \Phi_1, \Phi_2, \dots \sim_{\mbox{iid}} \mbox{Dir}(\beta)
+                  \end{equation}
+		\pause
+		\item Merge into complete distribution
+                  \begin{equation}
+                    \Theta = \sum_k C_k \delta_{\Phi_k}
+                  \end{equation}
+                  \pause
+                  \item Draw document word counts
+                    \begin{align}
+                      \phi_d & \sim \Theta \\
+                      w_d & \sim \phi_d  
+                    \end{align}
+       \end{itemize}
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}{Extending DPMM for text: HDP}
+
+\begin{itemize}
+  \item Topic models can use multiple topics per document
+  \item Mixture model can only use one
+  \item HDP is the non-parametric extension 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Hierarchical Dirichlet Process}
+
+  \begin{itemize}
+    \item Draw a global distribution over topics (e.g., $H\equiv \dir{\alpha}$)
+      \begin{equation}
+        G_0 \sim \mbox{DP}(\gamma, H)
+      \end{equation}
+  \end{itemize}
+
+\end{frame}
+
+\end{document}

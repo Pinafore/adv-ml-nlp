@@ -1,0 +1,216 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{dpmm/#1}
+\end{center}
+}
+\title{Bayesian Non-Parametrics}
+\date{Overview}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+
+\begin{frame}{Clustering as Probabilistic Inference}
+	\begin{itemize}
+		\item GMM is a probabilistic model (unlike $K$-means)
+		\item There are several latent variables:
+		\begin{itemize}
+			\item Means
+			\item Assignments
+			\item (Variances)
+		\end{itemize}
+		\pause
+		\item Corresponds to representation in unbounded space
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Nonparametric Clustering}
+
+	\begin{itemize}
+		\item What if the number of clusters is not fixed?
+		\item Nonparametric: can grow if data need it
+		\item Probabilistic distribution over number of clusters
+	\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Dirichlet Process}
+
+\begin{itemize}
+	\item Distribution over distributions
+	\item Parameterized by: $\alert<2>{\alpha}, \alert<3>{G}$
+	\item<2-> Concentration parameter
+	\item<3-> Base distribution
+	\item<4-> You can then draw observations from $x \sim $DP$(\alpha, G)$.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Defining a DP}
+
+	\begin{itemize}
+		\item Break off sticks
+                  \begin{align}
+                    V_1, V_2, & \dots \sim_{\mbox{iid}} \mbox{Beta}(1,
+                    \alpha) \\
+                    C_k & \equiv V_k \prod_{j=1}^{k-1} (1 - V_k)
+                  \end{align}
+		\pause
+		\item Draw atoms
+                  \begin{equation}
+                    \Phi_1, \Phi_2, \dots \sim_{\mbox{iid}} G
+                  \end{equation}
+		\pause
+		\item Merge into complete distribution
+                  \begin{equation}
+                    \Theta = \sum_k C_k \delta_{\Phi_k}
+                  \end{equation}
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Properties of a DPMM}
+
+	\begin{itemize}
+		\item Expected value is the same as base distribution
+		\begin{equation}
+			\e{\mbox{DP}(\alpha, G)}{x} = \e{G}{x}
+		\end{equation}
+		\item As $\alpha \rightarrow \infty$, $\mbox{DP}(\alpha, G) = G$
+		\item Number of components unbounded
+		\item Impossible to represent fully on computer (truncation)
+		\item You can nest DPs
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Effect of scaling parameter $\alpha$}
+
+	\gfx{dp-alpha}{.9}
+
+\end{frame}
+
+
+\begin{frame}{DP as mixture Model}
+
+	\gfx{dp-mixture}{.9}
+
+\end{frame}
+
+\begin{frame}{The Chinese Restaurant as a Distribution}
+
+	To generate an observation, you first sit down at a table.  You sit down at a table proportional to the number of people sitting at the table.
+	\begin{center}
+	\begin{tabular}{ccc}
+	\includegraphics[width=.2\linewidth]{dpmm/table_2} &
+	\includegraphics[width=.2\linewidth]{dpmm/table_3} &
+         \includegraphics[width=.2\linewidth]{dpmm/table_2} \\
+	 \pause
+	 $\frac{2}{7}$ & $\frac{3}{7}$ & \alert<3->{$\frac{2}{7}$} \\
+	 \pause
+	 \pause
+	 $x \sim \mu_1$ & $x \sim \mu_2$ & \alert<4>{$x \sim \mu_3$} \\
+	\end{tabular}
+	\pause
+	\begin{block}{But this is just Maximum Likelihood}
+		Why are we talking about Chinese Restaurants?
+	\end{block}
+	\end{center}
+
+\end{frame}
+
+\begin{frame}{Always can squeeze in one more table \dots}
+
+	\begin{itemize}
+		\item The \emph{posterior} of a DP is CRP
+		\item A new observation has a new table / cluster with probability proportional to $\alpha$
+		\item But this must be balanced against the probability of an observation \emph{given a cluster}
+                  \begin{equation}
+                    \Theta = \sum_k C_k \delta_{\Phi_k}
+                  \end{equation}
+
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Gibbs Sampling}
+
+	\begin{itemize}
+		\item We want to know the cluster assignment of each observation \only<4->{(tables)}
+		\item Take a random guess initially
+		\pause
+		\item This provides a mean for each cluster
+		\pause
+		\item Let the number of clusters grow
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Gibbs Sampling}
+
+	\begin{itemize}
+		\item We want to know $\vec z$
+		\item Compute $p(z_i \g z_1 \dots z_{i-1}, z_{i+1}, \dots z_m, x, \alpha, G)$
+		\item Update $z_i$ by sampling from that distribution
+		\item Keep going \dots
+	\end{itemize}
+	\pause
+	\begin{block}{Notation}
+		\begin{equation}
+			p(z_i = k \g z_{-i}) \equiv p(z_i \g z_1 \dots z_{i-1}, z_{i+1}, \dots z_m)
+		\end{equation}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Gibbs Sampling for DPMM}
+
+	\begin{align}
+		& p(z_i =k \g \vec z_{-i}, \vec x, \{\theta_k\}, \alpha) \\
+\only<2->{		= & p(z_i = k \g \vec z_{-i}, x_i, \vec x, \theta_k, \alpha) \\}
+\only<3->{		= & p(z_i = k \g \vec z_{-i}, \alpha) p(x_i \g \theta_k, \vec x) \\}
+\only<4->{		= & \begin{cases} \left( \frac{n_k}{n_\cdot + \alpha} \right) \int_\theta p(x_i \g \theta) p(\theta \g G, \vec x) & \mbox{existing} \\
+		\frac{\alpha}{n_\cdot + \alpha} \int_\theta p(x_i \g \theta) p(\theta \g G) & \mbox{new} \end{cases} \\}
+\only<5->{		= & \begin{cases} \left( \frac{n_k}{n_\cdot + \alpha} \right) \Norm{x}{\frac{n \bar{x}}{n + 1}}{\mathbb{1}} & \mbox{existing} \\
+		\frac{\alpha}{n_\cdot + \alpha} \Norm{x}{0}{\mathbb{1}}  & \mbox{new} \end{cases}		}
+	\end{align}
+
+\only<2>{Dropping irrelevant terms}
+\only<3>{Chain rule}
+\only<4>{Applying CRP}
+\only<5>{Scary integrals assuming $G$ is normal distribution with mean zero and unit variance.  (Derived in optional reading.)}
+
+\end{frame}
+
+
+\begin{frame}{Algorithm for Gibbs Sampling}
+
+\begin{enumerate}
+	\item Random initial assignment to clusters
+	\item For iteration $i$:
+	\begin{enumerate}
+		\item ``Unassign'' observation $n$
+		\item Choose new cluster for that observation
+	\end{enumerate}
+\end{enumerate}
+
+\end{frame}
+
+
+
+\end{document}
