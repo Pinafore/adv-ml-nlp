@@ -1,0 +1,27 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+\usepackage{tikz}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{lm/#1}
+\end{center}
+}
+\title{Language Models}
+\date{Log-Linear Language Models (and Brown Clusters)}
+
+\newcommand{\mymk}[2]{%
+  \tikz[baseline=(char.base)]\node[anchor=south west, draw,rectangle, rounded corners, inner sep=2pt, minimum size=7mm,
+    text height=2mm](char){\texttt{#1}} ;\textsuperscript{#2}}
+
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+\end{document}

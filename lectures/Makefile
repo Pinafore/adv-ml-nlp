@@ -12,6 +12,12 @@ clean:
 
 05: 05a.pdf 05b.pdf 05c.pdf 05d.pdf
 
+06: 06a.pdf 06b.pdf 06c.pdf 06d.pdf
+
+07: 07a.pdf 07b.pdf 07c.pdf
+
+12: 12b.pdf
+
 %.pdf: %.tex
 	pdflatex -shell-escape $*
 	cp $@ ../../jbg-web/teaching/CSCI_7000

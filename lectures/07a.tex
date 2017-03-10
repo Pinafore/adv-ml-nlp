@@ -1,0 +1,340 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{lm/#1}
+\end{center}
+}
+\title{Language Models}
+\date{Foundations}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+
+
+\begin{frame}{Roadmap}
+After this class, you'll be able to:
+  \begin{itemize}
+    \item Give examples of where we need language models
+    \item Evaluate language models
+    \item Connection between Bayesian nonparametrics and backoff
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Language models}
+\begin{itemize}
+\item {\bf Language models} answer the question: {\em How likely is a string of English words good English?}
+\item Autocomplete on phones and websearch
+\item Creating English-looking documents
+\item Very common in machine translation systems
+\begin{itemize}
+\item Help with reordering / style
+\begin{equation*}
+p_{\mbox{\sc lm}}(\mbox{the house is small}) > p_{\mbox{\sc lm}}(\mbox{small the is house})
+\end{equation*}
+\item Help with word choice
+\begin{equation*}
+p_\text{\sc lm}(\mbox{I am going home}) > p_\text{\sc lm}(\mbox{I am going house})
+\end{equation*}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Why language models?}
+
+  \begin{itemize}
+    \item Like sorting for computer science
+    \item Language models essential for many NLP applications
+    \item Optimized for performance and runtime
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{N-Gram Language Models}
+\begin{itemize}
+\item Given: a string of English words \maths{$W = w_1,w_2,w_3,...,w_n$}
+\item Question: what is \maths{$p(W)$}?
+\item Sparse data: Many good English sentences will not have been seen before
+\item[$\rightarrow$] Decomposing \maths{$p(W)$} using the chain rule:
+\begin{align*}
+p(w_1,w_2,w_3,...,w_n) = & \\ p(w_1)\;p(w_2|w_1)&\;p(w_3|w_1,w_2) \dots p(w_n|w_1,w_2,...w_{n-1})
+\end{align*}
+(not much gained yet, \maths{$p(w_n|w_1,w_2,...w_{n-1})$} is equally sparse)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Markov Chain}
+\begin{itemize}
+\item {\bf Markov independence assumption}:
+\begin{itemize}
+\item only previous history matters
+\item limited memory: only last $k$ words are included in history \\(older words less relevant)
+\item[$\rightarrow$] {\bf $k$th order Markov model}
+\end{itemize}
+\item For instance 2-gram language model:
+\begin{equation*}
+p(w_1,w_2,w_3,...,w_n) \simeq p(w_1)\;p(w_2|w_1)\;p(w_3|w_2) ... p(w_n|w_{n-1})
+\end{equation*}
+\item What is conditioned on, here \maths{$w_{i-1}$} is called the {\bf history}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{How good is the LM?}
+\begin{itemize}
+\item A good model assigns a text of real English \maths{$W$} a high probability
+\item This can be also measured with {\bf perplexity}
+\begin{align*}
+\text{perplexity}(W) & = P(w_1, \dots w_N)^{-\frac{1}{N}} \\
+	& = \sqrt[N]{\prod_i^N \frac{1}{P(w_i | w_1 \dots w_{i-1})}}
+\end{align*}
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Comparison 1--4-Gram}
+\begin{center}
+\begin{tabular}{c|r|r|r|r}
+word & unigram & bigram & trigram & 4-gram \\ \hline \hline
+{\bf i}           & 6.684 & 3.197 & 3.197 & 3.197\\ \hline
+{\bf would}       & 8.342 & 2.884 & 2.791 & 2.791\\ \hline
+{\bf like}        & 9.129 & 2.026 & 1.031 & 1.290\\ \hline
+{\bf to}          & 5.081 & 0.402 & 0.144 & 0.113\\ \hline
+{\bf commend}     &15.487 &12.335 & 8.794 & 8.633\\ \hline
+{\bf the}         & 3.885 & 1.402 & 1.084 & 0.880\\ \hline
+{\bf reporter }  &10.840 & 7.319 & 2.763 & 2.350\\ \hline
+{\bf .}           & 4.896 & 3.020 & 1.785 & 1.510\\ \hline
+{\bf \textless /s\textgreater}  & 4.828 & 0.005 & 0.000 & 0.000\\ \hline \hline
+average          &   &  &   &  \\ \hline
+perplexity       & 265.136 & 16.817 & 6.206 & 4.758\\
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}{Example: 3-Gram}
+
+\begin{itemize}
+\item Counts for trigrams and estimated word probabilities
+\begin{center}
+
+\begin{tabular}{c|c|c}
+\multicolumn{3}{c}{{\bf the red} (total: 225)}\\[1mm]
+word & c. & prob. \\ \hline \hline
+{\bf cross} & 123 & 0.547 \\ \hline
+{\bf tape} & 31 & 0.138 \\ \hline
+{\bf army} & 9 & 0.040 \\ \hline
+{\bf card} & 7 & 0.031 \\ \hline
+{\bf ,} & 5 & 0.022 \\ \hline
+\end{tabular}
+
+\end{center}
+
+\begin{itemize}
+\item 225 trigrams in the Europarl corpus start with {\bf the red}
+\item 123 of them end with {\bf cross}
+\item[$\rightarrow$] maximum likelihood probability is $\frac{123}{225}=0.547$.
+\end{itemize}
+\pause
+\item Can't use ML estimate
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{How do we estimate a probability?}
+
+\begin{itemize}
+   \item Assuming a {\bf sparse Dirichlet} prior, \maths{$\alpha<1$} to each count
+     \begin{equation}
+       \theta_{i} = \frac{n_i + \alpha_i}{\sum_k {n_k + \alpha_k}}
+     \end{equation}
+   \item $\alpha_i$ is called a smoothing factor, a pseudocount, etc.
+     \pause
+   \item When $\alpha_i = 1$ for all $i$, it's called ``Laplace smoothing''
+     \pause
+   \item What is a good value for  \maths{$\alpha$}?
+   \item Could be optimized on held-out set to find the ``best'' language model
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: 2-Grams in Europarl}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|} \hline
+\bf Count & \multicolumn{2}{c|}{\bf Adjusted count} & \bf Test count \\ \hline
+\maths{$c$} & \maths{$(c+1)$} & \maths{$(c+\alpha)$} & \maths{$t_c$}\\ \hline
+  0 &  0.00378 &  0.00016 & 0.00016\\ \hline
+  1 &  0.00755 &  0.95725 & 0.46235\\ \hline
+  2 &  0.01133 &  1.91433 & 1.39946\\ \hline
+  3 &  0.01511 &  2.87141 & 2.34307\\ \hline
+  4 &  0.01888 &  3.82850 & 3.35202\\ \hline
+  5 &  0.02266 &  4.78558 & 4.35234\\ \hline
+  6 &  0.02644 &  5.74266 & 5.33762\\ \hline
+  8 &  0.03399 &  7.65683 & 7.15074\\ \hline
+ 10 &  0.04155 &  9.57100 & 9.11927\\ \hline
+ 20 &  0.07931 & 19.14183 & 18.95948\\ \hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Add-{$\alpha$} smoothing with \maths{$\alpha=0.00017$}
+\item \maths{$t_c$} are average counts of n-grams in test set that occurred \maths{$c$} times in corpus
+\end{itemize}
+
+\pause
+\vspace{-5cm}
+
+\begin{block}{Can we do better?}
+  In higher-order models, we can learn from similar contexts!
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Back-Off}
+
+\begin{itemize}
+\item In given corpus, we may never observe
+\begin{itemize}
+\item {\bf Scottish beer drinkers}
+\item {\bf Scottish beer eaters}
+\end{itemize}
+\item Both have count 0\\[2mm]
+$\rightarrow$ our smoothing methods will assign them same probability
+\item Better: backoff to bigrams:
+\begin{itemize}
+\item {\bf beer drinkers}
+\item {\bf beer eaters}
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Interpolation}
+\begin{itemize}
+\item Higher and lower order n-gram models have different strengths and weaknesses
+\begin{itemize}
+\item high-order n-grams are sensitive to more context, but have sparse counts
+\item low-order n-grams consider only very limited context, but have robust counts
+\end{itemize}
+\item Combine them
+\begin{equation*}
+\begin{split}
+p_I(w_3|w_1,w_2) = \; & \phantom{\times \;} \lambda_1 \; p_1(w_3) \\
+& + \lambda_2 \; p_2(w_3|w_2) \\
+& + \lambda_3 \; p_3(w_3|w_1,w_2)
+\end{split}
+\end{equation*}
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Back-Off}
+
+\begin{itemize}
+\item Trust the highest order language model that contains n-gram
+\begin{equation*}
+\begin{split}
+p^{BO}_n&(w_i|w_{i-n+1},...,w_{i-1}) =\\
+& =
+\begin{cases}
+\alpha_n(w_i|w_{i-n+1},...,w_{i-1}) \\
+\phantom{--- ---} \text{if count$_n(w_{i-n+1},...,w_i)>0$} \\[2mm]
+d_n(w_{i-n+1},...,w_{i-1}) \; p^{BO}_{n-1}(w_i|w_{i-n+2},...,w_{i-1}) \\
+\phantom{--- ---}\text{else}
+\end{cases}
+\end{split}
+\end{equation*}
+
+\item Requires
+\begin{itemize}
+\item adjusted prediction model \maths{$\alpha_n(w_i|w_{i-n+1},...,w_{i-1})$}
+\item discounting function \maths{$d_n(w_1,...,w_{n-1})$}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What's a word?}
+
+\begin{itemize}
+	\item There are an infinite number of words
+		\begin{itemize}
+			\item Possible to develop generative story of how new words are created
+			\item Bayesian non-parametrics
+		\end{itemize}
+	\pause
+	\item Defining a vocabulary (the event space)
+	\item But how do you handle words outside of your vocabulary?
+	\pause
+	\begin{itemize}
+		\item Ignore? You could win just by ignoring everything
+		\item Standard: replace with \texttt{<UNK>} token
+	\end{itemize}
+	\item Next week: word representations!
+\end{itemize}
+
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Reducing Vocabulary Size}
+\begin{itemize}
+\item For instance: each number is treated as a separate token
+\item Replace them with a number token {\bf \sc num}
+\begin{itemize}
+\item but: we want our language model to prefer
+
+\begin{equation*}
+p_\text{\sc lm}(\mbox{I pay 950.00 in May 2007}) > p_\text{\sc lm}(\mbox{I pay 2007 in May 950.00})
+\end{equation*}
+
+\item not possible with number token
+
+\begin{equation*}
+p_\text{\sc lm}(\mbox{I pay {\sc num} in May {\sc num}}) = p_\text{\sc lm}(\mbox{I pay {\sc num} in May {\sc num}})
+\end{equation*}
+
+\end{itemize}
+\item Replace each digit (with unique symbol, e.g., {\bf @} or {\bf 5}), retain some distinctions
+
+\begin{equation*}
+p_\text{\sc lm}(\mbox{I pay 555.55 in May 5555}) > p_\text{\sc lm}(\mbox{I pay 5555 in May 555.55})
+\end{equation*}
+\end{itemize}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

@@ -46,7 +46,7 @@
 
 % commands
 
-\newcommand{\Norm}[3]{\mathcal{N}\left( #1, #2, #3 \right)}
+\newcommand{\Norm}[3]{\mathcal{N}\left( #1 \g #1, #2 \right)}
 \newcommand{\popshow}[2]{\only<#1->{\alert<#1>{#2}}}
 \newcommand{\x}{\mathbf{x}}
 \newcommand{\ex}[1]{\mbox{exp}\left\{ #1\right\} }
@@ -77,6 +77,17 @@
 \newcommand{\argmax}[0]{ \arg \max }
 \newcommand{\tcjclass}[0]{c_j}
 \newcommand{\maths}[1]{ {\bf #1}}
+
+\newcommand{\fsi}[2]{
+\begin{frame}[plain]
+\vspace*{-1pt}
+\makebox[\linewidth]{\includegraphics[width=\paperwidth]{#1}}
+\begin{center}
+#2
+\end{center}
+\end{frame}
+}
+
 
 
 

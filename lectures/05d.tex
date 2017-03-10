@@ -24,8 +24,8 @@
 \frametitle{Outline}
 \begin{enumerate}
 \item Latent feature models
-\item Finite latent feature models
-\item Beta and Indian Buffet Processes
+\item Finite latent {\bf feature} (i.e. binary) models
+\item (Very fast introduction)
 \item Application: Topic Models
 \end{enumerate}
 \end{frame}
@@ -37,8 +37,8 @@
 \item Dense feature model: every feature is present in every item, e.g. PCA
 \item Sparse feature model: only some features present in each item, and we can assume feature values and presence are independent:
     \begin{eqnarray*}
-        \mathbf{F} &=& \mathbf{A} \otimes \mathbf{Z} \\
-        P(\mathbf{F}) &=& P(\mathbf{A})P(\mathbf{Z})
+        \mathbf{X} &=& \mathbf{A} \otimes \mathbf{Z} \\
+        P(\mathbf{X}) &=& P(\mathbf{A})P(\mathbf{Z})
     \end{eqnarray*}
 \end{itemize}
 
@@ -62,7 +62,7 @@
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.3]{ibp/ibp-example-photos.png}
+\includegraphics[scale=0.5]{ibp/ibp-example-photos.png}
 \caption{Griffiths and Ghahramani (2011) Figure 9}
 \end{center}
 \end{figure}
@@ -90,7 +90,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Finite latent feature models}
-The basic finite distribution on $z_{i,k}$s: 
+The basic finite distribution on $z_{i,k}$s:
 \begin{eqnarray*}
     \pi_k | \alpha &\sim& \text{Beta} \left(\frac{\alpha}{K}, 1 \right) \\
     z_{i,k} | \pi_k &\sim& \text{Bernoulli}(\pi_k)
@@ -159,7 +159,7 @@ Stick-breaking construction:
 \begin{eqnarray*}
 \mu_k \sim \text{Beta}(\alpha, 1) \\
 \pi_k = \prod_{j=1}^k \mu_j \\
-b_{m,k} \sim \text{Bernoulli}(\pi_k) 
+b_{m,k} \sim \text{Bernoulli}(\pi_k)
 \end{eqnarray*}
 
 
@@ -190,7 +190,7 @@ Focused topic model:
   \item Sample distribution over topics $\theta_m \sim \text{Dirichlet}(b_m \cdot \phi)$
   \item For each word $w_{m,i}, i=1,\ldots,n^{(m)}$
     \begin{enumerate}
-    \item Draw topic index $z_{m,i} \sim \text{Discrete}(\theta_m)$ 
+    \item Draw topic index $z_{m,i} \sim \text{Discrete}(\theta_m)$
     \item Draw word $w_{m,i} \sim \text{Discrete}(\beta_{z_{m_i}})$
     \end{enumerate}
   \end{itemize}
@@ -199,8 +199,10 @@ Focused topic model:
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Application 2: Topic Modeling}
+\frametitle{Application: Topic Modeling}
 % Williamson, Wang, Heller, and Blei (2010)
+
+
 
 % \begin{center}
 % ``The IBP Compound Dirichlet Process \\
@@ -208,7 +210,25 @@ Focused topic model:
 % Williamson, Wang, Heller, and Blei (2010)
 % \end{center}
 
-An advantage of the focused topic model is that it separates the global topic proportions from the distribution over topics within a document. A rare topic within the corpus can be dominant within a document (e.g. baseball), and a frequent topic can be a small proportion of many documents.
+\begin{columns}
+  \column{.5\linewidth}
+  \begin{center}
+  Number of Topics a Word Appears in
+  \end{center}
+  \column{.5\linewidth}
+  \begin{center}
+  Number of Documents a Topic Appears in
+  \end{center}
+\end{columns}
+
+\gfx{focused-tm}{.8}
+
+\begin{itemize}
+  \item Separates global topic proportions from per-document
+    distribution
+  \item Rare topics can dominate documents
+  \item Frequent topics can't appear in as many documents
+\end{itemize}
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,6 +250,20 @@ Limitations of IBP:
 \end{figure}
 
 \end{frame}
- 
+
+
+\begin{frame}{Connection to Rest of Course}
+
+  \begin{itemize}
+    \item[+] Bayesian Nonparameterics discovers dimension
+    \item[+] Strong probabilistic foundations
+    \item[+] Gives meaning to representation
+    \item[-] Hard to implement
+    \item[-] Slow
+    \item[-] Not as effective
+  \end{itemize}
+
+\end{frame}
+
 % End of slides
-\end{document} 
+\end{document}

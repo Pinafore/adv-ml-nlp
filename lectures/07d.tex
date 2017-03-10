@@ -1,0 +1,131 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+\usepackage{tikz}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{lm/#1}
+\end{center}
+}
+\title{Language Models}
+\date{Scalability, Contrasting Models}
+
+\newcommand{\mymk}[2]{%
+  \tikz[baseline=(char.base)]\node[anchor=south west, draw,rectangle, rounded corners, inner sep=2pt, minimum size=7mm,
+    text height=2mm](char){\texttt{#1}} ;\textsuperscript{#2}}
+
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+
+\begin{frame}{What about when your data are really big?}
+
+  \begin{itemize}
+    \item Knesser-Ney isn't practical
+    \item And Gibbs Sampling is simply {\bf impossible}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Stupid Backoff}
+
+  Don't use maximum likelihood:
+  \begin{equation}
+    \hat p(w_i \g w_{i-n+1}^{i-1}) = \frac{f(w_{i-n+1}^i)}{f(w_{i-n+1}^{i-1})}
+    \end{equation}
+
+  Forget about probabilities!
+  \begin{equation}
+    S(w_i \g w^{i-1}_{i-k+1}) = \begin{cases} \frac{f(w_{i-k+1}^i)}{f(w_{i-k+1}^{i-1})} & \mbox{if} f(w_{i-k+1}^i) \\
+\alpha S(w_i \g w_{i-k+2}^{i-1}) & \mbox{otherwise}
+\end{cases}
+  \end{equation}
+
+\end{frame}
+
+\begin{frame}{Performance}
+
+  \gfx{stupid}{.9}
+
+\end{frame}
+
+\begin{frame}{Comparing KN and NN representations}
+
+  \begin{itemize}
+    \item KN tells you when to trust contexts
+    \item Similar to memory (next week)
+    \item But only works for \emph{exact} matches
+    \item Probabilistic formulation allows for combination with longer-range dependencies
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{We haven't talked about Neural LMs yet \dots}
+
+  \begin{itemize}
+    \item But you can use your imagination
+    \item (Partial) Solution to big data problem: don't have to explicitly store so many counts
+    \item But huge vocabulary size still causes scalability problem
+    \item And lots of time to train
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Neural models can simply do things counting can't}
+
+  \begin{center}
+    \only<1>{\gfx{nn-position}}{1.0}
+    \only<2>{\gfx{nn-quote}}{1.0}
+    \only<3>{\gfx{nn-comment}}{1.0}
+  \end{center}
+
+  \begin{center}
+    From Andrej Karpathy
+  \end{center}
+\end{frame}
+
+\begin{frame}{Situations to use various LMs}
+
+  \begin{itemize}
+    \item Little Data: Interpolated LM
+    \item Code it Yourself: Interpolated LM
+    \item Moderate Data, Lazy: Knesser-Ney
+    \item Lots of Data, Little Computation: Stupid Backoff
+    \item Lots of Data, Good Libraries: Neural LM
+   \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Why even talk about KN?}
+
+  \begin{itemize}
+    \item Hard to beat
+    \item Not that hard to implement (and good packages out there)
+    \item Convergent evolution of hacks and theory
+    \item Connect to other models: topic models, character representation (steal ideas for NLM)
+    \item We should be able to use formalism with representations! (Project?)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Next time \dots}
+
+  \begin{itemize}
+    \item Neural language models
+    \item Backprop through time
+    \item How to train neural language models
+  \end{itemize}
+
+\end{frame}
+
+
+\end{document}

@@ -3,6 +3,7 @@
 
 \input{course_style}
 
+\usepackage{bm}
 
 \newcommand{\gfx}[2]{
 \begin{center}
@@ -10,7 +11,7 @@
 \end{center}
 }
 \title{Bayesian Non-Parametrics}
-\date{Overview}
+\date{Text Analysis}
 
 \begin{document}
 
@@ -46,15 +47,16 @@
                     \Phi_1, \Phi_2, \dots \sim_{\mbox{iid}} \mbox{Dir}(\beta)
                   \end{equation}
 		\pause
-		\item Merge into complete distribution
+		\item Merge into complete distribution (i.e., $\Theta
+                  \sim \mbox{DP}(\alpha, \beta \vec u)$)
                   \begin{equation}
                     \Theta = \sum_k C_k \delta_{\Phi_k}
                   \end{equation}
                   \pause
-                  \item Draw document word counts
+                  \item Draw document word counts (for $n=1\dots D_n$)
                     \begin{align}
                       \phi_d & \sim \Theta \\
-                      w_d & \sim \phi_d  
+                      w_{d,n} & \sim \phi_d
                     \end{align}
        \end{itemize}
 \end{footnotesize}
@@ -65,7 +67,7 @@
 \begin{itemize}
   \item Topic models can use multiple topics per document
   \item Mixture model can only use one
-  \item HDP is the non-parametric extension 
+  \item HDP is the non-parametric extension
 \end{itemize}
 
 \end{frame}
@@ -77,6 +79,73 @@
       \begin{equation}
         G_0 \sim \mbox{DP}(\gamma, H)
       \end{equation}
+      \item For each document $d$, draw distribution over topics
+        \begin{equation}
+          \phi_d \sim \mbox{DP}(\alpha, G_0)
+        \end{equation}
+        \begin{itemize}
+          \item For each word $w_{d,n}$ in the document, draw it from document
+            distribution
+        \begin{equation}
+          w_{d,n} \sim \phi_d
+        \end{equation}
+        \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Chinese Restaurant Franchise}
+
+  \gfx{crp-franchise}{.55}
+
+  \begin{center}
+    $t$: Assignment at global table \\
+    $z$: Assignment at document table
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Gibbs Sampling}
+
+    \begin{equation}
+      p(z_{dn} = k, t_{dn} = j \g {\bm z^{-ji}}, {\bm t^{-ji}}) \propto \begin{cases}
+\frac{\alert<2>{n_{d,k}}}{n_{d,\cdot} + \alert<4>{\alpha}} \alert<6>{f(w_{dn} \g \Psi_k)} & $k,j$
+\mbox{ existing} \\
+\frac{\alert<4>{\alpha}}{\alpha+\alert<2>{n_{d,\cdot}}}\frac{\alert<3>{ m_{j}}}{\alert<5>{\gamma} + \alert<3>{m_\cdot}} \alert<6>{f(w_{dn} \g \Psi_j)} & $k$
+\mbox{ new, }$j$ \mbox{ existing} \\
+\frac{\alert<4>{\alpha}}{\alpha+\alert<2>{n_{d,\cdot}}}
+  \frac{\alert<5>{\gamma}}{\alert<5>{\gamma} + \alert<3>{m_\cdot}} \alert<6>{f(w_{dn} \g H_0)} & $k, j$ \mbox{ new}
+\end{cases}
+    \end{equation}
+
+    \begin{center}
+    \only<2>{Number of tokens seated in lower-level table}
+    \only<3>{Number of tokens seated at higher-level table}
+    \only<4>{Lower-level concentration}
+    \only<5>{Higher-level concentration}
+    \only<6>{Multinomial (or whatever base distribution)}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Discovers Dimensionality}
+
+  \gfx{hdp-dimension}{.8}
+
+  \begin{itemize}
+    \item Discovers dimensionality
+    \item Additional layers can capture different aspects of data
+    \item But only unsupervised objective
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Inference}
+
+  \begin{itemize}
+    \item Very similar to LDA
+    \item Need to worry about truncation
+    \item Can be slower
   \end{itemize}
 
 \end{frame}
