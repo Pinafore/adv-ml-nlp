@@ -1,0 +1,199 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{frameworks/#1}
+\end{center}
+}
+\title{Frameworks}
+\date{Introduction}
+
+\begin{document}
+
+
+\frame{\titlepage
+Slides adapted from Chris Dyer, Yoav Goldberg, Graham Neubig
+}
+
+
+
+\begin{frame}{Neural Nets and Language}
+
+\begin{columns}
+  \column{.5\linewidth}
+  \begin{block}{Language}
+    Discrete, structured (graphs, trees)
+  \end{block}
+  \column{.5\linewidth}
+  \begin{block}{Neural-Nets}
+    Continuous: poor native support for structure
+  \end{block}
+\end{columns}
+
+Big challenge: writing code that translates between the \{discrete-structured, continuous\} regimes
+
+\end{frame}
+
+
+\begin{frame}{Outline}
+\begin{itemize}
+\item Computation graphs (general)
+\item Neural Nets in DyNet
+\item RNNs
+\item Minibatching
+\item New functions
+\item Tagging with BiLSTM
+\item Structured perceptron
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Computation Graphs}
+
+\begin{block}{Expression}
+\only<1>{  $\vec x$}
+\only<2>{ $ \vec x^{\top}$}
+\only<3>{$ \vec x^{\top} A$}
+\only<4-5>{$ \vec x^{\top} A x$}
+\only<6-7>{$\only<7>{\alert<7>{y=}} \vec x^{\top} A x + b \cdot \vec x + c$}
+\end{block}
+
+\only<1>{\gfx{cg1}{.3}}
+\only<2>{\gfx{cg2}{.5}}
+\only<3>{\gfx{cg3}{.4}}
+\only<4>{\gfx{cg4}{.4}}
+\only<5>{\gfx{cg5}{.7}}
+\only<6>{\gfx{cg6}{.7}}
+\only<7>{\gfx{cg7}{.6}}
+
+\only<2>{
+\begin{itemize}
+  \item Edge: function argument / data dependency
+  \item A node with an incoming edge is a function $F \equiv f(u)$ edge's tail
+    node
+\item A node computes its value and the value of its derivative w.r.t each argument (edge) times a derivative $\grad{f}{u}$
+\end{itemize}
+}
+
+\only<3>{Functions can be nullary, unary, binary, \dots n-ary. Often they are unary or binary.}
+
+\only<4>{Computation graphs are (usually) directed and acyclic}
+
+\only<7>{Variable names label nodes}
+
+\end{frame}
+
+
+\begin{frame}{Algorithms}
+
+\begin{itemize}
+\item Graph construction
+\item Forward propagation
+\begin{itemize}
+\item Loop over nodes in topological order
+\item Compute the value of the node given its inputs
+\item Given my inputs, make a prediction (or compute an ``error'' with
+  respect to a ``target output'')
+\end{itemize}
+\item Backward propagation
+\begin{itemize}
+\item Loop over the nodes in reverse topological order starting with a final goal node
+\item Compute derivatives of final goal node value with respect to each edge’s tail node
+\item How does the output change if I make a small change to the inputs?
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Forward Propagation}
+  \only<1>{\gfx{fp1}{.7}}
+  \only<2>{\gfx{fp2}{.7}}
+  \only<3>{\gfx{fp3}{.7}}
+  \only<4>{\gfx{fp4}{.7}}
+  \only<5>{\gfx{fp5}{.7}}
+  \only<6>{\gfx{fp6}{.7}}
+  \only<7>{\gfx{fp7}{.7}}
+  \only<8>{\gfx{fp8}{.7}}
+\end{frame}
+
+\begin{frame}{Constructing Graphs}
+
+\begin{columns}
+\column{.5\linewidth}
+\begin{block}{Static declaration}
+  \begin{itemize}
+    \item Define architecture, run data through
+    \item PROS: Optimization, hardware support
+    \item CONS: Structured data ugly, graph language
+  \end{itemize}
+\end{block}
+Torch, Theano, Tensorflow
+\column{.5\linewidth}
+\begin{block}{Dynamic declaration}
+  \begin{itemize}
+  \item Graph implicit with data
+  \item PROS: Native language, interleave construction/evaluation
+  \item CONS: Slower, computation can be wasted
+  \end{itemize}
+\end{block}
+Stan, Chainer, \alert<2>{DyNet}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Dynamic Hierarchy in Language}
+
+\begin{itemize}
+  \item Language is hierarchical
+    \only<3->{
+    \begin{itemize}
+      \item Graph should reflect this reality
+        \item Traditional flow-control best for processing
+          \end{itemize}
+\item Combinatorial algorithms (e.g., dynamic programming)
+\item Exploit independencies to compute over a large space of
+  operations tractably
+}
+\end{itemize}
+  \vspace{-.6cm}
+\only<2>{
+  \gfx{hierarchy}{.9}
+}
+\end{frame}
+
+\begin{frame}{DyNet}
+\begin{itemize}
+\item Before DyNet:
+  \begin{itemize}
+    \item AD libraries are fast and good, lack deep learning must-haves (GPUs, optimization algorithms, primitives for implementing RNNs, etc.)
+    \item Deep learning toolkits don't support dynamic graphs well
+    \end{itemize}
+\item DyNet is a hybrid between a generic autodiff library and a Deep
+  learning toolkit
+\begin{itemize}
+  \item It has the flexibility of a good AD library
+    \item It has most obligatory DL primitives\footnote{Although the
+        emphasis is dynamic operation, it can run perfectly well in
+        ``static mode''. It's quite fast too! But if you're happy with
+        that, probably stick to TensorFlow/Theano/Torch.}
+      \item Useful for RL over structure (need this later)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{DyNet}
+
+\begin{itemize}
+\item C++ backend based on Eigen (like TensorFlow)
+\item Custom (``quirky'') memory management
+\item A few well-hidden assumptions make the graph construction and execution very fast.
+\item Thin Python wrapper on C++ API
+\end{itemize}
+
+\end{frame}
+
+\end{document}

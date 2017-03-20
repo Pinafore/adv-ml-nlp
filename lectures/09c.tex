@@ -1,0 +1,263 @@
+
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{frameworks/#1}
+\end{center}
+}
+\title{Frameworks}
+\date{Recurrent Neural Networks in DyNet}
+
+\begin{document}
+
+
+\frame{\titlepage
+Slides adapted from Chris Dyer, Yoav Goldberg, Graham Neubig
+}
+
+\begin{frame}{Recurrent Neural Networks}
+
+\begin{itemize}
+\item NLP is full of sequential data
+\begin{itemize}
+\item Words in sentences
+\item Characters in words
+\item Sentences in discourse
+\end{itemize}
+\pause
+\item How do we represent an arbitrarily long history?
+\pause
+we will train neural networks to build a representation of these arbitrarily big sequences
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Recurrent}
+
+  \gfx{ff_vs_rnn}{.9}
+
+\end{frame}
+
+\begin{frame}{Recurrent NN}
+
+  \only<1>{ \gfx{rnn1}{.9}
+    How do we train the parameters?
+}
+
+  \only<2>{ \gfx{rnn2}{.9}}
+  \only<3-4>{ \gfx{rnn3}{.9} Parameter tying}
+  \only<4>{
+    \vspace{-5cm}
+    \begin{block}{Unrolling}
+\begin{itemize}
+\item Well-formed (DAG) computation graph---we can run backprop
+\item Parameters are tied across time, derivatives are aggregated across all time steps
+\item ``backpropagation through time''
+\end{itemize}
+    \end{block}
+}
+  \only<5>{ \gfx{rnn4}{.9} Each word contributes to gradient}
+  \only<6>{ \gfx{rnn5}{.9} Summarize sentence into downstream vector}
+  \only<7>{ \gfx{rnn6}{.9} Let's get more concrete: RNN language model}
+  \only<8>{ \gfx{rnn7}{.9} }
+  \only<9>{ \gfx{rnn8}{.9} }
+  \only<10>{ \gfx{rnn9}{.9} Training (log loss from each word)}
+\end{frame}
+
+
+\begin{frame}[fragile]{RNNs in DyNet}
+
+\begin{itemize}
+\item Based on ``Builder'' class (for variety of models)
+  \item Can also roll your own
+    \item Add parameters to model (once)
+\begin{minted}[fontsize=\footnotesize]{python}
+# RNN (layers=1, input=64, hidden=128, model)
+RNN = dy.SimpleRNNBuilder(1, 64, 128, model)
+\end{minted}
+      \item Add parameters to CG and get initial state (per sentence)
+\begin{minted}[fontsize=\footnotesize]{python}
+s = RNN.initial_state()
+\end{minted}
+        \item Update state and access (per input word/character)
+\begin{minted}[fontsize=\footnotesize]{python}
+s = s.add_input(x_t)
+h_t = s.output()
+\end{minted}
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------
+\begin{frame}[fragile]{Parameter Initialization}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+# Lookup parameters for word embeddings
+WORDS_LOOKUP = model.add_lookup_parameters((nwords, 64))
+
+# Word-level LSTM (layers=1, input=64, hidden=128, model)
+RNN = dy.LSTMBuilder(1, 64, 128, model)
+
+# Softmax weights/biases on top of LSTM outputs
+W_sm = model.add_parameters((nwords, 128))
+b_sm = model.add_parameters(nwords)
+\end{minted}
+
+\end{frame}
+%----------------------------------
+
+
+%----------------------------------
+\begin{frame}[fragile]{Sentence Initialization}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+# Build the language model graph
+def calc_lm_loss(wids):
+    dy.renew_cg()
+
+    # parameters -> expressions
+    W_exp = dy.parameter(W_sm)
+    b_exp = dy.parameter(b_sm)
+
+    # add parameters to CG and get state
+    f_init = RNN.initial_state()
+
+    # get the word vectors for each word ID
+    wembs = [WORDS_LOOKUP[wid] for wid in wids]
+
+    # Start the rnn by inputting "<s>"
+    s = f_init.add_input(wembs[-1])
+\end{minted}
+
+\end{frame}
+%----------------------------------
+
+
+%----------------------------------
+\begin{frame}[fragile]{Loss Calculation and State Update}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+    # process each word ID and embedding
+    losses = []
+    for wid, we in zip(wids, wembs):
+
+        # calculate and save the softmax loss
+        score = W_exp * s.output() + b_exp
+        loss = dy.pickneglogsoftmax(score, wid)
+        losses.append(loss)
+
+        # update the RNN state with the input
+        s = s.add_input(we)
+
+    # return the sum of all losses
+    return dy.esum(losses)
+\end{minted}
+
+\end{frame}
+%----------------------------------
+
+
+\begin{frame}{Custom Functions}
+
+  \begin{itemize}
+    \item DyNet has a lot of functions
+      \only<2>{
+        \begin{block}{Built-in Functions}
+\begin{tiny}
+addmv, affine\_transform, average, average\_cols, binary\_log\_loss, block\_dropout, cdiv, colwise\_add, concatenate, concatenate\_cols, const\_lookup, const\_parameter, contract3d\_1d, contract3d\_1d\_1d, conv1d\_narrow, conv1d\_wide, cube, cwise\_multiply, dot\_product, dropout, erf, exp, filter1d\_narrow, fold\_rows, hinge, huber\_distance, input, inverse, kmax\_pooling, kmh\_ngram, l1\_distance, lgamma, log, log\_softmax, logdet, logistic, logsumexp, lookup, max, min, nobackprop, noise, operator*, operator+, operator-, operator/, pairwise\_rank\_loss, parameter, pick, pickneglogsoftmax, pickrange, poisson\_loss, pow, rectify, reshape, select\_cols, select\_rows, softmax, softsign, sparsemax, sparsemax\_loss, sqrt, square, squared\_distance, squared\_norm, sum, sum\_batches, sum\_cols, tanh, trace\_of\_product, transpose, zeroes
+\end{tiny}
+        \end{block}
+}
+\only<3->{
+
+\item Implement yourself
+  \begin{itemize}
+    \item Combine built-in Python operators (chain rule)
+      \item Forward/Backward methods in C++
+        \only<4->{\item Geometric Mean}
+    \end{itemize}
+}
+  \end{itemize}
+
+\end{frame}
+
+
+%----------------------------------
+\begin{frame}[fragile]{Forward Function}
+
+\begin{minted}[fontsize=\footnotesize]{c}
+template<class MyDevice>
+void GeometricMean::forward_dev_impl(const MyDevice & dev,
+            const vector<const Tensor*>& xs,
+            Tensor& fx) const {
+  fx.tvec().device(*dev.edevice) =
+         (xs[0]->tvec() * xs[1]->tvec()).sqrt();
+}
+\end{minted}
+
+\begin{itemize}
+\item dev: which device (CPU/GPU)
+\item xs: input values
+\item fx: output value
+\end{itemize}
+
+\end{frame}
+%----------------------------------
+
+
+%----------------------------------
+\begin{frame}[fragile]{Backward Function}
+
+\begin{minted}[fontsize=\footnotesize]{c}
+template<class MyDevice>
+void GeometricMean::backward_dev_impl(const MyDevice & dev,
+                  const vector<const Tensor*>& xs,
+                  const Tensor& fx,
+                  const Tensor& dEdf,
+                  unsigned i,
+                  Tensor& dEdxi) const {
+  dEdxi.tvec().device(*dev.edevice) +=
+         xs[i==1?0:1] * fx.inv() / 2 * dEdf;
+}
+\end{minted}
+
+\begin{itemize}
+\item dev: which device (CPU/GPU)
+\item xs: input values
+\item fx: output value
+\item dEdf: derivative of loss w.r.t $f$
+\item i: index of input to consider
+\item dEdxi: derivative of loss w.r.t. $x[i]$
+\end{itemize}
+
+\end{frame}
+%----------------------------------
+
+
+\begin{frame}{Other Functions to Implement}
+
+\begin{itemize}
+\item nodes.h: class definition
+\item nodes-common.cc: dimension check and function name
+\item expr.h/expr.cc: interface to expressions
+\item dynet.pxd/dynet.pyx: Python wrappers
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Wrapup}
+
+  \begin{itemize}
+    \item Rolling your own is usually not a good idea
+    \item DyNet covers a very specific gap compared to TensorFlow, etc.
+    \item Not just for neural models (e.g., variational objective)
+  \end{itemize}
+
+\end{frame}
+
+\end{document}

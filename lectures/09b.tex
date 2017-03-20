@@ -1,0 +1,490 @@
+
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{frameworks/#1}
+\end{center}
+}
+\title{Frameworks}
+\date{Neural Networks in DyNet}
+
+\begin{document}
+
+
+\frame{\titlepage
+Slides adapted from Chris Dyer, Yoav Goldberg, Graham Neubig
+}
+
+\begin{frame}{Major Players}
+
+\begin{itemize}
+\item Computation Graph
+\item Expressions (nodes in the graph)
+\item Parameters
+\item Model (a collection of parameters)
+\item Trainer
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Computation Graph}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+import dynet as dy
+
+dy.renew_cg() # create a new computation graph
+
+v1 = dy.inputVector([1,2,3,4])
+v2 = dy.inputVector([5,6,7,8])
+# v1 and v2 are expressions
+
+v3 = v1 + v2
+v4 = v3 * 2
+v5 = v1 + 1
+v6 = dy.concatenate([v1,v3,v5])
+\end{minted}
+\pause
+
+\begin{minted}[fontsize=\footnotesize]{python}
+>>> print(v6)
+expression 5/1
+>>> print(v6.npvalue())
+[  1.   2.   3.   4.   6.   8.  10.  12.   2.   3.   4.   5.]
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Computation Graph and Expressions}
+
+\begin{itemize}
+\item Create basic expressions.
+\item Combine them using operations.
+\item Expressions represent symbolic computations.
+\item Actual computation:
+
+\begin{minted}[fontsize=\footnotesize]{python}
+.value()
+.npvalue()               #numpy value
+.scalar_value()
+.vec_value()             # flatten to vector
+.forward()               # compute expression
+\end{minted}
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Models and Parameters}
+
+\begin{itemize}
+  \item {\bf Parameters} are the things that we optimize over (vectors, matrices).
+  \item {\bf Model} is a collection of parameters.
+  \item {\bf Parameters} out-live the computation graph.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Models and Parameters}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+model = dy.Model()
+
+pW = model.add_parameters((2,4))
+pb = model.add_parameters(2)
+\end{minted}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+dy.renew_cg()
+x = dy.inputVector([1,2,3,4])
+W = dy.parameter(pW) # convert params to expression
+b = dy.parameter(pb) # and add to the graph
+
+y = W * x + b
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Inspecting}
+
+Let's inspect \alert<1>{$x$}, \alert<2>{$W$}, \alert<3>{$b$}, and \alert<4>{$y$}.
+\pause
+\begin{minted}[fontsize=\footnotesize]{python}
+>>> x.value()
+[1.0, 2.0, 3.0, 4.0]
+\end{minted}
+\pause
+\begin{minted}[fontsize=\footnotesize]{python}
+>>> W.value()
+array([[ 0.64952731, -0.06049263,  0.90871298, -0.11073416],
+       [ 0.75935686,  0.25788534, -0.98922664,  0.20040739]])
+\end{minted}
+\pause
+\begin{minted}[fontsize=\footnotesize]{python}
+>>> b.value()
+[-1.5444282293319702, -0.660666823387146]
+\end{minted}
+\pause
+\begin{minted}[fontsize=\footnotesize]{python}
+>>> y.value()
+[1.267316222190857, -1.5515896081924438]
+\end{minted}
+
+\end{frame}
+
+
+% TODO: Look up these initializations
+\begin{frame}[fragile]{Initialization}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+model = dy.Model()
+
+pW = model.add_parameters((4,4))
+
+pW2 = model.add_parameters((4,4),
+                      init=dy.GlorotInitializer())
+
+pW3 = model.add_parameters((4,4),
+                      init=dy.NormalInitializer(0,1))
+\end{minted}
+
+\begin{block}{Glorot Initialization}
+  \begin{equation}
+    \Norm{w_i}{0}{\frac{1}{n_{\textit{in}, \textit{out}}}}
+  \end{equation}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Trainers and Backprop}
+
+\begin{itemize}
+
+\item Initialize a Trainer with a given model.
+\item Compute gradients by calling expr.backward() from a scalar node.
+\item Call trainer.update() to update the model parameters using the gradients.
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Trainers and Backprop}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+model = dy.Model()
+
+trainer = dy.SimpleSGDTrainer(model)
+
+p_v = model.add_parameters(10)
+
+for i in xrange(10):
+    dy.renew_cg()
+
+    v = dy.parameter(p_v)
+    v2 = dy.dot_product(v,v)
+    v2.forward()
+
+    v2.backward()  # compute gradients
+    trainer.update()
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Options for Trainers}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+  dy.SimpleSGDTrainer(model,...)
+
+  dy.MomentumSGDTrainer(model,...)
+
+  dy.AdagradTrainer(model,...)
+
+  dy.AdadeltaTrainer(model,...)
+
+  dy.AdamTrainer(model,...)
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Training with DyNet}
+
+\begin{itemize}
+\item Create model, add parameters, create trainer.
+\item For each training example:
+\begin{itemize}
+  \item create computation graph for the loss
+  \item run forward (compute the loss)
+  \item run backward (compute the gradients)
+  \item update parameters
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Multilayer Perceptron for XOR}
+
+\begin{itemize}
+  \item Model
+    \begin{equation}
+      \hat y = \sigma(\hat v \cdot \mbox{tanh}(U \vec x + b))
+      \end{equation}
+      \item Loss
+        \begin{equation}
+        \ell = \begin{cases} - \log \hat y & \mbox{if }y = 0\\
+          - \log (1 - \hat y) & \mbox{if }y = 0\\
+          \end{cases}
+          \end{equation}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Imports and Data}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+import dynet as dy
+import random
+
+data =[ ([0,1],0),
+        ([1,0],0),
+        ([0,0],1),
+        ([1,1],1) ]
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Create Model}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+model = dy.Model()
+pU = model.add_parameters((4,2))
+pb = model.add_parameters(4)
+pv = model.add_parameters(4)
+
+trainer = dy.SimpleSGDTrainer(model)
+closs = 0.0
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+for x,y in data:
+   # create graph for computing loss
+   dy.renew_cg()
+   U = dy.parameter(pU)
+   b = dy.parameter(pb)
+   v = dy.parameter(pv)
+   x = dy.inputVector(x)
+   # predict
+   yhat = dy.logistic(dy.dot_product(v,dy.tanh(U*x+b)))
+   # loss
+   if y == 0:
+      loss = -dy.log(1 - yhat)
+   elif y == 1:
+      loss = -dy.log(yhat)
+
+   closs += loss.scalar_value() # forward
+   loss.backward()
+   trainer.update()
+\end{minted}
+\pause
+{\bf Important}: loss expression defines objective you're optimizing
+
+\end{frame}
+
+\begin{frame}{Key Points}
+
+\begin{itemize}
+  \item Create computation graph for each example.
+  \item Graph is built by composing expressions.
+  \item Functions that take expressions and return expressions define graph components.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Word Embeddings and Lookup Parameters}
+
+\begin{itemize}
+  \item In NLP, it is very common to use feature embeddings.
+  \item Each feature is represented as a $d$-dim vector.
+  \item These are then summed or concatenated to form an input vector.
+  \item The embeddings can be pre-trained.
+  \item They are usually trained with the model.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------
+\fsi{frameworks/feat_embed}{}
+%----------------------------------
+
+\begin{frame}[fragile]{}
+
+\begin{minted}[fontsize=\footnotesize]{python}
+vocab_size = 10000
+emb_dim = 200
+
+E = model.add_lookup_parameters((vocab_size, emb_dim))
+
+dy.renew_cg()
+x = dy.lookup(E, 5)
+# or
+x = E[5]
+# x is an expression
+\end{minted}
+
+\end{frame}
+%----------------------------------
+
+\fsi{frameworks/dan_title}{Implementing a non-trivial example \dots}
+
+%----------------------------------
+
+\begin{frame}[fragile]{Deep Averaging Network}
+
+\begin{columns}
+  \column{.3\linewidth}
+
+  \begin{align*}
+    w_1, &\dots, w_N \\
+    & \downarrow \\
+    z_0 = & \mbox{CBOW}(w_1, \dots, w_N) \\
+    z_1 = & g(z_1) \\
+    z_2 = & g(z_2) \\
+    \hat y = & \mbox{softmax}(z_3)
+  \end{align*}
+
+  \column{.7\linewidth}
+
+    \begin{itemize}
+      \item Works about as well as more complicated models
+      \item Strong baseline
+      \item Key idea: Continuous Bag of Words
+        \begin{equation}
+          \mbox{CBOW}(w_1, \dots, w_N) = \sum_i E[w_i]
+        \end{equation}
+      \item Actual non-linearity doesn't matter, we'll use tanh
+      \item Let's implement in DyNet
+    \end{itemize}
+
+\end{columns}
+\end{frame}
+%----------------------------------
+
+\begin{frame}[fragile]{Deep Averaging Network}
+
+\begin{columns}
+  \column{.3\linewidth}
+
+  \begin{align*}
+    w_1, &\dots, w_N \\
+    & \downarrow \\
+    z_0 = & \alert<1>{\mbox{CBOW}(w_1, \dots, w_N)} \\
+    z_1 = & \alert<2>{g(z_1)} \\
+    z_2 = & \alert<3>{g(z_2)} \\
+    \hat y = & \mbox{softmax}(z_3)
+  \end{align*}
+
+  \column{.7\linewidth}
+
+\alert<1>{Encode the document}
+\begin{minted}[fontsize=\footnotesize]{python}
+def encode_doc(doc):
+    doc = [w2i[w] for w in doc]
+    embs = [E[idx] for idx in doc]
+    return dy.esum(embs)
+\end{minted}
+
+\alert<2>{First Layer}
+\begin{minted}[fontsize=\footnotesize]{python}
+def layer1(x):
+    W = dy.parameter(pW1)
+    b = dy.parameter(pb1)
+    return dy.tanh(W*x+b)
+\end{minted}
+
+\alert<3>{Second Layer}
+\begin{minted}[fontsize=\footnotesize]{python}
+def layer2(x):
+    W = dy.parameter(pW2)
+    b = dy.parameter(pb2)
+    return dy.tanh(W*x+b)
+\end{minted}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{Deep Averaging Network}
+
+\begin{columns}
+  \column{.3\linewidth}
+
+  \begin{align*}
+    w_1, &\dots, w_N \\
+    & \downarrow \\
+    z_0 = & \mbox{CBOW}(w_1, \dots, w_N) \\
+    z_1 = & g(z_1) \\
+    z_2 = & g(z_2) \\
+    \hat y = & \mbox{softmax}(z_3)
+  \end{align*}
+
+  \column{.7\linewidth}
+
+\alert<1>{Loss}
+\begin{minted}[fontsize=\tiny]{python}
+def do_loss(probs, label):
+    label = label_indicator[label]
+    return -dy.log(dy.pick(probs,label)) # select that index
+\end{minted}
+
+\alert<2>{Putting it all together}
+\begin{minted}[fontsize=\tiny]{python}
+def predict_labels(doc):
+    x = encode_doc(doc)
+    h = layer1(x)
+    y = layer2(h)
+    return dy.softmax(y)
+\end{minted}
+
+\alert<3>{Training}
+\begin{minted}[fontsize=\tiny]{python}
+for (doc, label) in data:
+    dy.renew_cg()
+    probs = predict_labels(doc)
+
+    loss = do_loss(probs,label)
+    loss.forward()
+    loss.backward()
+    trainer.update()
+\end{minted}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Summary}
+
+\begin{itemize}
+  \item Computation Graph
+  \item Expressions ($\approx$ nodes in the graph)
+  \item Parameters, LookupParameters
+  \item Model (a collection of parameters)
+  \item Trainers
+  \item Create a graph for each example, then compute loss, backdrop, update.
+\end{itemize}
+
+\end{frame}
+
+\end{document}

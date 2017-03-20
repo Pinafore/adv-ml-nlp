@@ -16,6 +16,8 @@ clean:
 
 07: 07a.pdf 07b.pdf 07c.pdf
 
+09: 09a.pdf 09b.pdf 09c.pdf
+
 12: 12b.pdf
 
 %.pdf: %.tex
