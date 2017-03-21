@@ -1,0 +1,31 @@
+
+Siddharth:
+There's not enough detail in the description to know what model you're going to try.  Would be good to have a clear idea of the progression of models that you'll explore.
+
+This seems pretty ambitious; it might be good to think about a very simple baseline that you can build from so that you can get some baseline results ASAP.  You might also want to consider joining forces with someone else also working on question answering.
+
+Xiaolei:
+Is the existing dataset labeled?  How big is it, and how many are labeled?  What phenomena do you hope to capture with these methods that can't be captured with logistic regression?
+
+Wikireading:
+There's not enough detail in the description to know what model you're going to try.  Would be good to have a clear idea of the progression of models that you'll explore.
+
+Given that there are a number of QA projects, it may be worthwhile to join forces with another QA group.
+
+Yoshinari:
+
+My only concern is the lack of supervised data.  It may be worthwhile to consider an unsupervised objective as well.
+
+Aditya:
+
+Nice proposal.  Would be interesting to also backprop into the topic modeling vectors.
+
+For others: this is a nicely thought out project; if other QA folks want to join forces, this might be one to consider.
+
+Cecilia:
+
+Reasonable proposal.  Might also want to consider our Comics dataset.  :)
+
+http://github.com/miyyer/comics
+
+For others: this is a nice vision-based project; if other folks want to join forces, this might be one to consider
