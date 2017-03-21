@@ -239,7 +239,7 @@ for i in xrange(10):
       \item Loss
         \begin{equation}
         \ell = \begin{cases} - \log \hat y & \mbox{if }y = 0\\
-          - \log (1 - \hat y) & \mbox{if }y = 0\\
+          - \log (1 - \hat y) & \mbox{if }y = 1\\
           \end{cases}
           \end{equation}
 \end{itemize}
@@ -360,9 +360,9 @@ x = E[5]
     w_1, &\dots, w_N \\
     & \downarrow \\
     z_0 = & \mbox{CBOW}(w_1, \dots, w_N) \\
-    z_1 = & g(z_1) \\
-    z_2 = & g(z_2) \\
-    \hat y = & \mbox{softmax}(z_3)
+    z_1 = & g(W_1 z_0 + b_1) \\
+    z_2 = & g(W_2 z_1 + b_2) \\
+    \hat y = & \mbox{softmax}(z_2)
   \end{align*}
 
   \column{.7\linewidth}
@@ -482,7 +482,7 @@ for (doc, label) in data:
   \item Parameters, LookupParameters
   \item Model (a collection of parameters)
   \item Trainers
-  \item Create a graph for each example, then compute loss, backdrop, update.
+  \item Create a graph for each example, compute loss, backdrop, update
 \end{itemize}
 
 \end{frame}
