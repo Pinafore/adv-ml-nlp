@@ -1,0 +1,34 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{memory/#1}
+\end{center}
+}
+\title{Frameworks}
+\date{Introduction}
+
+\begin{document}
+
+
+\frame{\titlepage
+Slides adapted from Christopher Olah
+}
+
+
+\begin{frame}{What's wrong with RNNs?}
+
+  \only<1>{\gfx{RNN-shorttermdepdencies}{.9}}
+  \only<2>{\gfx{RNN-longtermdependencies}{.9}}
+
+\end{frame}
+
+\begin{frame}{Learning a regular expression}
+
+\end{frame}
+
+\end{document}

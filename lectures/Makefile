@@ -18,6 +18,8 @@ clean:
 
 09: 09a.pdf 09b.pdf 09c.pdf
 
+10: 10a.pdf 10b.pdf
+
 12: 12b.pdf
 
 %.pdf: %.tex

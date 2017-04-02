@@ -1,0 +1,108 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{memory/#1}
+\end{center}
+}
+\title{Frameworks}
+\date{Introduction}
+
+\begin{document}
+
+
+\frame{\titlepage
+Slides adapted from Christopher Olah
+}
+
+
+\begin{frame}{RNN transforms Input into Hidden}
+
+  \gfx{LSTM3-SimpleRNN}{.9}
+
+  (Can be other nonlinearities)
+
+\end{frame}
+
+\begin{frame}{LSTM has more complicated innards}
+
+  \gfx{LSTM3-chain}{.9}
+  \gfx{LSTM2-notation}{.8}
+  \pause
+  Built on gates!
+
+\end{frame}
+
+
+\begin{frame}{Gates}
+
+\begin{columns}
+  \column{.5\linewidth}
+  \gfx{LSTM3-gate}{.7}
+  \column{.5\linewidth}
+  \begin{itemize}
+    \item Multiply vector by scalar in $[0,1]$
+    \item Zero means: forget everything
+    \item One means: carry through unchanged
+    \item LSTM has three different gates
+  \end{itemize}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Cell State}
+
+  \gfx{LSTM3-C-line}{.9}
+  Can pass through (memory)
+\end{frame}
+
+\begin{frame}{Deciding When to Forget}
+
+  \gfx{LSTM3-focus-f}{.9}
+
+  Based on previous hidden state $h_{t-1}$, can decide to forget past cell state
+
+\end{frame}
+
+\begin{frame}{Updating representation}
+
+  \gfx{LSTM3-focus-i}{.9}
+
+  Compute new contribution to cell state based on hidden state
+  $h_{t-1}$ and input $x_t$
+
+\end{frame}
+
+
+\begin{frame}{Updating representation}
+
+  \gfx{LSTM3-focus-i}{.9}
+
+  Compute new contribution to cell state based on hidden state
+  $h_{t-1}$ and input $x_t$.  Strength of contribution is $i_t$
+
+\end{frame}
+
+
+\begin{frame}{Updating representation}
+
+  \gfx{LSTM3-focus-C}{.9}
+
+  Interpolate new cell value
+
+\end{frame}
+
+\begin{frame}{Output hidden}
+
+  \gfx{LSTM3-focus-o}{.9}
+
+  Hidden layer is function of cell $C_t$, not $h_{t-1}$
+
+\end{frame}
+
+\end{document}
