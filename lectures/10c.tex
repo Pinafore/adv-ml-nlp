@@ -10,98 +10,78 @@
 \end{center}
 }
 \title{Frameworks}
-\date{Introduction}
+\date{LSTM Variants}
 
 \begin{document}
 
 
 \frame{\titlepage
-Slides adapted from Christopher Olah
 }
 
+\begin{frame}{What's most important part of LSTM}
 
-\begin{frame}{RNN transforms Input into Hidden}
+  \only<1>{
+ Greff et al. explore
+    \begin{itemize}
+\item No Input Gate (NIG)
+\item No Forget Gate (NFG)
+\item No Output Gate (NOG)
+\item No Input Activation Function (NIAF)
+\item No Output Activation Function (NOAF)
+\item No Peepholes (NP)
+\item Coupled Input and Forget Gate (CIFG) : GRU, $f_t = 1 - i_t$
+\item Full Gate Recurrence (FGR): Original LSTM paper
+    \end{itemize}
 
-  \gfx{LSTM3-SimpleRNN}{.9}
-
-  (Can be other nonlinearities)
+}
+  \only<2>{\gfx{perf-vs-params}{.75}}
 
 \end{frame}
 
-\begin{frame}{LSTM has more complicated innards}
+\begin{frame}{GRU simplifies slightly}
 
-  \gfx{LSTM3-chain}{.9}
-  \gfx{LSTM2-notation}{.8}
-  \pause
-  Built on gates!
+  \only<1>{\gfx{LSTM-removal}{.8}
+
+  }
+
+
+  \only<2>{\gfx{LSTM3-var-GRU}{.9}
+
+  Slightly fewer parameters}
 
 \end{frame}
 
+\begin{frame}{Bi-directional LSTMs}
 
-\begin{frame}{Gates}
+  \gfx{RNN-bidirectional}{.8}
 
-\begin{columns}
-  \column{.5\linewidth}
-  \gfx{LSTM3-gate}{.7}
-  \column{.5\linewidth}
+  Simple extension, often slightly improve performance (but don't
+  always make sense for task)
+\end{frame}
+
+
+\begin{frame}{Comparing architechtures}
+
   \begin{itemize}
-    \item Multiply vector by scalar in $[0,1]$
-    \item Zero means: forget everything
-    \item One means: carry through unchanged
-    \item LSTM has three different gates
+    \item GRUs seem competitive
+    \item LSTM seems to be good tradeoff
+    \item Bi-directional often offers slight improvement
   \end{itemize}
-\end{columns}
 
 \end{frame}
 
 
-\begin{frame}{Cell State}
+\begin{frame}{Why not convolutional nets?}
 
-  \gfx{LSTM3-C-line}{.9}
-  Can pass through (memory)
-\end{frame}
+  \begin{itemize}
+    \item Doesn't make sense linguistically
+    \item Pretty expensive
+    \item LSTMs usually work about as well
+  \pause
+  \item GRU convnet provides better mechanism
+  \end{itemize}
 
-\begin{frame}{Deciding When to Forget}
-
-  \gfx{LSTM3-focus-f}{.9}
-
-  Based on previous hidden state $h_{t-1}$, can decide to forget past cell state
-
-\end{frame}
-
-\begin{frame}{Updating representation}
-
-  \gfx{LSTM3-focus-i}{.9}
-
-  Compute new contribution to cell state based on hidden state
-  $h_{t-1}$ and input $x_t$
-
-\end{frame}
-
-
-\begin{frame}{Updating representation}
-
-  \gfx{LSTM3-focus-i}{.9}
-
-  Compute new contribution to cell state based on hidden state
-  $h_{t-1}$ and input $x_t$.  Strength of contribution is $i_t$
-
-\end{frame}
-
-
-\begin{frame}{Updating representation}
-
-  \gfx{LSTM3-focus-C}{.9}
-
-  Interpolate new cell value
-
-\end{frame}
-
-\begin{frame}{Output hidden}
-
-  \gfx{LSTM3-focus-o}{.9}
-
-  Hidden layer is function of cell $C_t$, not $h_{t-1}$
+  \gfx{GRU-tree}{.5}
 
 \end{frame}
 

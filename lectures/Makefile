@@ -18,9 +18,11 @@ clean:
 
 09: 09a.pdf 09b.pdf 09c.pdf
 
-10: 10a.pdf 10b.pdf
+10: 10a.pdf 10b.pdf 10c.pdf
 
-12: 12b.pdf
+11: 11a.pdf 11b.pdf 11c.pdf 11d.pdf
+
+12: 12a.pdf 12b.pdf 12c.pdf 12d.pdf 12e.pdf
 
 %.pdf: %.tex
 	pdflatex -shell-escape $*

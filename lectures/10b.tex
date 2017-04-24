@@ -9,8 +9,8 @@
 	\includegraphics[width=#2\linewidth]{memory/#1}
 \end{center}
 }
-\title{Frameworks}
-\date{Introduction}
+\title{Memory Networks}
+\date{LSTM Walkthrough}
 
 \begin{document}
 
@@ -74,16 +74,6 @@ Slides adapted from Christopher Olah
   \gfx{LSTM3-focus-i}{.9}
 
   Compute new contribution to cell state based on hidden state
-  $h_{t-1}$ and input $x_t$
-
-\end{frame}
-
-
-\begin{frame}{Updating representation}
-
-  \gfx{LSTM3-focus-i}{.9}
-
-  Compute new contribution to cell state based on hidden state
   $h_{t-1}$ and input $x_t$.  Strength of contribution is $i_t$
 
 \end{frame}
@@ -102,6 +92,19 @@ Slides adapted from Christopher Olah
   \gfx{LSTM3-focus-o}{.9}
 
   Hidden layer is function of cell $C_t$, not $h_{t-1}$
+
+\end{frame}
+
+\begin{frame}{Loss function}
+
+  \begin{itemize}
+    \item To create a complete model, need to make a prediction
+    \item Usually function of hidden layer(s)
+      \begin{itemize}
+        \item Hinge loss of sentence label based on last word
+        \item Softmax of tag for each word
+      \end{itemize}
+  \end{itemize}
 
 \end{frame}
 

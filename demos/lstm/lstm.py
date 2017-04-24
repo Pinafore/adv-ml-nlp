@@ -2,7 +2,6 @@
 # https://github.com/nicodjimenez/lstm/blob/master/lstm.py
 
 import random
-import re
 from string import ascii_letters
 from loss import ToyLossLayer
 
@@ -202,17 +201,15 @@ def run_demo(vocab_size=2, hidden=3, desired_run=3, example_length=10, num_examp
     param = LstmParam(hidden, vocab_size)
     network = LstmNetwork(param)
 
-    # what we're looking for
-    sought = re.compile("".join(["a"] * desired_run))
-    
     # generate examples
     valid_chars = ascii_letters[:vocab_size]
     for ii in range(num_examples):
         ex_str = "".join(random.choice(valid_chars) for x in range(example_length))
         y_val = np.zeros(example_length)
 
-        for jj in sought.finditer(ex_str):
-            y_val[jj.end()-1] = 1.0
+        for jj in range(example_length):
+            y_val[jj] = sum(1 if x=='a' else 0 for x in ex_str[:(jj + 1)]) - sum(1 if x!='a' else 0 for x in ex_str[:(jj + 1)])
+            y_val[jj] = max(-2.0, min(2.0, y_val[jj]))
 
         print(ex_str)
         print("".join(str(int(x)) for x in y_val))

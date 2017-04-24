@@ -9,7 +9,7 @@
 	\includegraphics[width=#2\linewidth]{memory/#1}
 \end{center}
 }
-\title{Frameworks}
+\title{Memory Networks}
 \date{Introduction}
 
 \begin{document}
@@ -27,7 +27,28 @@ Slides adapted from Christopher Olah
 
 \end{frame}
 
+% TODO: Make this a more in-depth, compelling example
 \begin{frame}{Learning a regular expression}
+
+  \begin{itemize}
+    \item Suppose we wanted to learn $a^nb^n$
+    \item Need to encode arbitrarily long dependency in state of RNN
+    \item More importantly, don't know \emph{when} that information is useful
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Role of LSTMs}
+
+  \begin{itemize}
+    \item Now standard baseline method for sequency labeling and
+      classification tasks
+    \item Like RNNs, hidden layer is critically important
+    \item Can be applied to downstream tasks
+    \item Also can help with vanishing gradient problem
+  \end{itemize}
 
 \end{frame}
 
