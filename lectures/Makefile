@@ -24,6 +24,8 @@ clean:
 
 12: 12a.pdf 12b.pdf 12c.pdf 12d.pdf 12e.pdf
 
+13: 13a.pdf 13b.pdf 13c.pdf
+
 %.pdf: %.tex
 	pdflatex -shell-escape $*
 	cp $@ ../../jbg-web/teaching/CSCI_7000
