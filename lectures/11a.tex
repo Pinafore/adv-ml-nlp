@@ -1,0 +1,342 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{rl/#1}
+\end{center}
+}
+\title{Reinforcement Learning for NLP}
+\date{Reinforcement Overview, Policy Gradient}
+
+\usepackage{dependency/linkage6}
+
+\begin{document}
+
+\frame{\titlepage
+\tiny Adapted from slides by David Silver, Pieter Abbeel, and John Schulman
+}
+
+\begin{frame}
+
+  \begin{itemize}
+    \item I used to say that RL wasn't used in NLP \dots
+    \item Now it's all over the place
+    \item Part of much of ML hype
+    \item But what is reinforcement learning?
+      \pause
+      \begin{itemize}
+\item RL is a general-purpose framework for decision-making
+\item RL is for an agent with the capacity to act
+\item  Each action influences the agent's future state
+\item  Success is measured by a scalar reward signal
+\item  Goal: select actions to maximise future reward
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{columns}
+
+  \column{.5\linewidth}
+  \gfx{big_picture}{1.0}
+  \column{.5\linewidth}
+  \begin{itemize}
+\item At each step $t$ the agent:
+\begin{itemize}
+\item Executes action $a_t$
+\item Receives observation $o_t$
+\item Receives scalar reward $r_t$
+\end{itemize}
+\item The environment:
+\begin{itemize}
+\item Receives action $a_t$
+\item Emits observation $o_{t+1}$
+\item Emits scalar reward $r_{t+1}$
+    \end{itemize}
+    \end{itemize}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Example}
+
+\begin{tabular}{ccc}
+\hline
+  & QA & MT \\
+\hline
+{\bf State} & Words Seen & Foreign Words Seen \\
+{\bf Reward} & Answer Accuracy & Translation Quality \\
+{\bf Actions} & Answer / Wait & Translate / Wait \\
+\hline
+\end{tabular}
+
+
+\end{frame}
+
+
+\begin{frame}{State}
+
+  \begin{itemize}
+\item Experience is a sequence of observations, actions, rewards
+\begin{equation}
+o_1,r_1, a_1, \dots, a_{t−1}, o_t, r_t
+\end{equation}
+\item The state is a summary of experience
+\begin{equation}
+s_t = f (o_1, r_1, a_1, \dots, a_{t−1}, o_t, r_t)
+\end{equation}
+\item In a fully observed environment
+\begin{equation}
+s_t = f (o_t)
+\end{equation}
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{What makes an RL agent?}
+
+  \begin{itemize}
+\item Policy: agent's behaviour function
+\item Value function: how good is each state and/or action
+\item Model: agent's representation of the environment
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Policy}
+
+  \begin{itemize}
+\item A policy is the agent's behavior
+  \begin{itemize}
+\item  It is a map from state to action:
+\item  Deterministic policy: $a = \pi(s)$
+\item Stochastic policy: $\pi(a \g s) = p(a \g s)$
+  \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Value Function}
+
+  \begin{itemize}
+\item A value function is a prediction of future reward: ``How much reward will I get from action a in state s?''
+\item $Q$-value function gives expected total reward
+\begin{itemize}
+\item from state $s$ and action $a$
+\item under policy $\pi$
+\item with discount factor $\gamma$ (future rewards mean less than immediate)
+\begin{equation}
+Q^{\pi}(s, a) = \e{}{r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} +
+  \dots \g s, a}
+\end{equation}
+  \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{A Value Function is Great!}
+
+  \begin{itemize}
+    \item  An optimal value function is the maximum achievable value
+      \begin{equation}
+Q^{*}(s, a) = \max_\pi Q^{\pi}(s, a) = Q^{\pi^*}(s, a)
+\end{equation}
+    \item If you know the value function, you can derive policy
+      \begin{equation}
+\pi^{*} = \arg \max_a Q(s, a)
+      \end{equation}
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Approaches to RL}
+
+
+Value-based RL
+\begin{itemize}
+\item Estimate the optimal value function $Q^∗(s, a)$
+\item This is the maximum value achievable under any policy
+\end{itemize}
+Policy-based RL
+\begin{itemize}
+\item Search directly for the optimal policy $\pi^*$
+\item This is the policy achieving maximum future reward
+\end{itemize}
+Model-based RL
+\begin{itemize}
+\item Build a model of the environment
+\item Plan (e.g. by lookahead) using model
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Deep $Q$ Learning}
+
+\begin{itemize}
+\item Optimal $Q$-values should obey equation
+\begin{equation}
+Q^*(s, a) = \e{s'}{r + \gamma Q(s', a') \g s, a}
+\end{equation}
+\item Treat as regression problem
+\item Minimize: $\left(r + \gamma \max_a Q(s', a', \vec w) - Q(s, a,
+    \vec w) \right)^2$
+\item Converges to $Q^∗$ using table lookup representation
+\item But diverges using neural networks due to:
+\begin{itemize}
+\item Correlations between samples
+\item Non-stationary targets
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Deep RL in Atari}
+
+  \gfx{atari}{.9}
+
+\end{frame}
+
+\begin{frame}{DQN in Atari}
+
+\gfx{atari_net}{.8}
+\begin{itemize}
+\item End-to-end learning of values $Q(s, a)$ from pixels $s$
+\item Input state s is stack of raw pixels from last four frames
+\item Output is $Q(s, a)$ for 18 joystick/button positions
+\item Reward is change in score for that step
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Atari Results}
+  \gfx{atari_results}{.9}
+\end{frame}
+
+
+\begin{frame}{Policy-Based RL}
+
+\begin{itemize}
+  \item Advantages:
+    \begin{itemize}
+      \item Better convergence properties
+      \item Effective in high-dimensional or continuous action spaces
+        \item Can learn stochastic policies
+          \end{itemize}
+\item Disadvantages:
+  \begin{itemize}
+    \item Typically converge to a local rather than global optimum
+      \item Evaluating a policy is typically inefficient and high
+        variance
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Optimal Policies Sometimes Stochastic}
+
+  \only<1>{\gfx{rps}{.8}}
+  \only<2>{
+    \gfx{aliased_gw}{.8}
+    (Cannot distinguish gray states)
+}
+
+
+  \only<3-4>{Deterministic
+    \gfx{aliased_gw_det}{.8}
+    (Cannot distinguish gray states)
+
+    \only<4>{Value-based RL learns near deterministic policy!}
+
+    }
+  \only<5>{Stochastic
+    \gfx{aliased_gw_rand}{.8}
+    (Cannot distinguish gray states, so flip a coin!)
+    }
+\end{frame}
+
+\begin{frame}{Likelihood Ratio Policy Gradient}
+
+Let $\tau$ be state-action $s_0, u_0, \dots, s_H, u_H$.  Utility of
+policy $\pi$ parametrized by $\theta$ is
+\begin{equation}
+  U(\theta) = \e{\pi_\theta, U}{\sum_{t}^{H} R(s_t, u_t); \pi_\theta}
+  = \sum_{tau} P(\tau; \theta) R(\tau).
+\end{equation}
+Our goal is to find $\theta$:
+\begin{equation}
+  \max_\theta U(\theta) = \max_\theta \sum_t p(\tau; \theta) R(\tau)
+\end{equation}
+
+\end{frame}
+
+\begin{frame}{Likelihood Ratio Policy Gradient}
+\begin{equation}
+\sum_t p(\tau; \theta) R(\tau)
+\end{equation}
+Taking the gradient wrt $\theta$:
+\begin{align}
+  \only<2-4>{\nabla_\theta U(\theta) = &\sum_\tau \alert<2>{R(\tau) \frac{P(\tau;
+  \theta)}{P(\tau; \theta)}} \nabla_\theta P(\tau; \theta) \\}
+  \only<3-4>{ = &\sum_\tau P(\tau; \theta) \frac{\nabla_\theta P(\tau;
+  \theta)}{P(\tau; \theta)} R(\tau) \\ }
+  \only<4->{ = &\sum_\tau P(\tau; \theta) \nabla_\theta \left[ \log
+  P(\tau; \theta) \right] R(\tau)}
+\end{align}
+\only<2>{Move differentiation inside sum (ignore $R(\tau)$ and then
+  add in term that cancels out}
+\only<3>{Move derivative over probability}
+\only<4>{Assume softmax form}
+
+\only<5->{
+Approximate with empirical estimate for $m$ sample paths from $\pi$
+\begin{equation}
+\nabla_\theta U(\theta) \approx \frac{1}{m} \sum_1^m \nabla_\theta
+\log P(r^i; \theta) R(\tau^i)
+\end{equation}
+}
+
+\end{frame}
+
+\begin{frame}{Policy Gradient Intuition}
+
+  \gfx{pg-intuition}{.8}
+
+  \begin{itemize}
+\item Increase probability of paths	with positive $R$
+\item Decrease probability of paths with negagive $R$
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions}
+
+  \begin{itemize}
+    \item Consider baseline $b$ (e.g., path averaging)
+\begin{equation}
+\nabla_\theta U(\theta) \approx \frac{1}{m} \sum_1^m \nabla_\theta
+\log P(r^i; \theta) (R(\tau^i) - b(\tau))
+\end{equation}
+\item Combine with value estimation (critic)
+  \begin{itemize}
+    \item Critic: Updates action-value function parameters
+    \item Actor: Updates policy parameters in direction suggested by critic
+   \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,221 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{dependency/#1}
+\end{center}
+}
+\title{Reinforcement Learning for NLP}
+\date{Dependency Parsing}
+
+\usepackage{dependency/linkage6}
+
+\begin{document}
+
+\frame{\titlepage
+\tiny Adapted from slides by Neelamadhav Gantayat and Ryan MacDonald
+}
+
+
+% \subsection{Repositories}
+\begin{frame}{Dependency Syntax}
+
+\begin{itemize}
+  \item Turns sentence into syntactic structure
+  \item Essential for information extraction and other NLP tasks
+\end{itemize}
+
+\begin{block}{Lucien Tesni\`ere, 1959}
+The sentence is an organized whole, the constituent elements of which are words.  Every word that belongs to a sentence ceases by itself to be isolated as in the dictionary.  Between the word and its neighbors, the mind percieves connections, the totality of which forms the structure of the sentence.  The structural connections establish dependency relations between the words.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dependency Grammar}
+\begin{itemize}
+
+\item \textbf{Basic Assumption:} Syntactic structure essentially consists of lexical items linked by binary asymmetrical relations called dependencies.
+
+\end{itemize}
+\begin{figure}[h]
+  \centering
+  \gfx{ex1}{.8}
+%   \caption{Support Vector Machine}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Example of dependency parser output}
+\begin{figure}[h]
+  \centering
+  \gfx{ex2.pdf}{.8}
+  \caption{Output of Stanford dependency parser}
+\end{figure}
+\pause
+\begin{itemize}
+  \item Verb has an artificial root
+  \item Notion of phrases: ``by'' and its children
+  \item So how do we choose these edges?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Criteria for dependency}
+
+  $D$ is likely a dependent of head $H$ in construction $C$:
+  \begin{itemize}
+    \item $H$ determines syntactic category of $C$ and can often replace $C$
+    \item $H$ gives semantic specification of $C$; $D$ specifies $H$
+    \item $H$ is obligatory; $D$ may be optional
+    \item $H$ selectes $D$ and determines whether $D$ is obligatory
+    \item The form of $D$ depends on $H$ (agreement or government)
+    \item The linear position of $D$ is specified with reference to $H$
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Which direction?}
+
+Some tricky cases \dots
+\begin{itemize}
+  \item \alert<1-2>{Complex verb groups}
+  \item \alert<3-4>{Subordinate clauses}
+  \item \alert<5-6>{Coordination}
+  \item \alert<7-8>{Prepositions}
+  \item \alert<9-10>{Punctuation}
+\end{itemize}
+
+\vspace{1cm}
+
+\footnotesize
+\begin{mylinkage}{49}{1} %% length 57 letters, height 2 levels
+\lword{3}{I}
+\lword{5}{\alert<1>{can}}
+\lword{7}{\alert<1>{see}}
+\lword{9}{\alert<3>{that}}
+\lword{12}{they}
+\lword{15}{\alert<3>{rely}}
+\lword{18}{\alert<7>{on}}
+\lword{20}{\alert<5>{this}}
+\lword{23}{\alert<5>{and}}
+\lword{25}{\alert<5>{that}}
+\lword{27}{\alert<9>{.}}
+\thicklines
+\only<2->{
+  \ablink[r]{5}{3}{0}{} % can -> I
+  \ablink[r]{5}{7}{0}{} % can -> see
+  \ablink[r]{15}{12}{0}{} % rely -> they
+}
+\only<4->{
+  \ablink[r]{7}{10}{0}{} % see -> that
+  \ablink[r]{10}{16}{1}{} % that -> rely
+}
+\only<6->{
+  \ablink[r]{21}{23}{0}{} % and -> this
+  \ablink[r]{23}{26}{0}{} % and -> that
+}
+\only<8->{
+  \ablink[r]{16}{18}{0}{} % rely -> on
+  \ablink[r]{18}{21}{1}{} % on -> this
+}
+\only<9->{
+  \ablink[r]{5}{27}{2}{} % can -> .
+}
+
+\end{mylinkage}
+
+
+\end{frame}
+
+
+\begin{frame}{Dependency Parsing}
+
+\begin{itemize}
+  \item  Input: Sentence $x = w_0,w_1,...,w_n$
+  \item Output: Dependency graph $G = (V , A)$ for $x$ where:
+  \begin{itemize}
+    \item   $V = {0, 1, . . . , n}$ is the vertex set,
+    \item   $A$ is the arc set, i.e., $(i, j, k) \in A$ represents a dependency from $w_i$ to $w_j$ with label $l_k \in L$
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Projectivity}
+
+  \begin{itemize}
+    \item Equivalent to planar embedding
+    \item Most theoretical frameworks do not assume projectivity
+    \item Non-projective structures needed for free word order and long-distance dependencies
+  \begin{block}{Non-projective example}
+    \gfx{nonprojective}{.7}
+  \end{block}
+    \item The algorithm later we'll discuss is projective
+  \end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{Which direction?}
+
+Some clear cases \dots
+\begin{itemize}
+  \item Modifiers: ``nmod'' and ``vmod''
+  \item Verb slots: ``subject'' and ``object''
+\end{itemize}
+\vspace{2cm}
+
+\footnotesize
+\begin{mylinkage}{49}{1} %% length 57 letters, height 2 levels
+\lword{0}{ROOT}
+\lword{3}{Economic}
+\lword{8}{news}
+\lword{11}{suddenly}
+\lword{16}{affected}
+\lword{21}{financial}
+\lword{27}{markets}
+\thicklines
+\ablink[r]{1}{17}{2}{root}
+\ablink[r]{8}{4}{0}{nmod}
+\ablink[r]{16}{9}{1}{subj}
+\ablink[r]{16}{12}{0}{vmod}
+\ablink[r]{17}{28}{1}{obj}
+\ablink[r]{27}{22}{0}{nmod}
+\end{mylinkage}
+
+\end{frame}
+
+\begin{frame}{Not all choices are consistent}
+
+\only<1>{\gfx{scand-ex-1}{.9}}
+\only<2>{\gfx{scand-ex-2}{.9}}
+\end{frame}
+
+\begin{frame}{Universal Dependencies Project}
+
+  \begin{center}
+    \url{http://universaldependencies.org/}
+  \end{center}
+
+Mapping between languages that:
+\begin{enumerate}
+  \item satisfactory on linguistic grounds for the analysis of individual languages.
+  \item good for linguistic typology, i.e., providing a suitable basis for bringing out cross-linguistic parallelism across languages and language families.
+  \item suitable for rapid, consistent annotation by a human annotator.
+  \item suitable for training highly accurate parsers.
+  \item easily comprehensible and used by a non-linguist, whether a language learner or an engineer with prosaic needs for language processing.
+  \item useful for downstream language understanding tasks (relation extraction, reading comprehension, machine translation, \ldots).
+\end{enumerate}
+
+\end{frame}
+
+\end{document}

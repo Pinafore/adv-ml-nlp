@@ -1,0 +1,326 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{dependency/#1}
+\end{center}
+}
+\title{Reinforcement Learning for NLP}
+\date{Shift-Reduce Parsers}
+
+\usepackage{dependency/linkage6}
+
+\begin{document}
+
+\frame{\titlepage
+\tiny Adapted from material by Jimmy Lin and Jason Eisner
+}
+
+
+\begin{frame}{Shift-Reduce Parsing}
+
+\begin{itemize}
+	\item Alternative to arc-factored models
+	\item Cognitively plausible
+        \item Better at short-range dependencies
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Example}
+
+\only<1>{\gfx{sr_0}{.9}}
+\only<2>{\gfx{sr_1}{.9}}
+\only<3>{\gfx{sr_2}{.9}}
+\only<4>{\gfx{sr_3}{.9}}
+\only<5>{\gfx{sr_4}{.9}}
+\only<6>{\gfx{sr_5}{.9}}
+\only<7>{\gfx{sr_6}{.9}}
+\only<8>{\gfx{sr_7}{.9}}
+\only<9>{\gfx{sr_8}{.9}}
+\only<10>{\gfx{sr_9}{.9}}
+
+\end{frame}
+
+\begin{frame}{Components}
+
+  \begin{itemize}
+    \item Process a sentence word by word from a {\bf buffer}
+    \item You can temporarily place store words on a {\bf stack}
+    \item As you process you can either:
+      \begin{itemize}
+        \pause
+        \item \emph{Shift}: Move a word from the buffer to the stack
+        \pause
+        \item \emph{Left}: The top of the stack is the child of the
+          buffer's next word
+          \pause
+          \item \emph{Right}: The buffer's next word is the child of
+            the top of the stack
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Initial and Final Conditions}
+
+  \begin{itemize}
+    \item Initially the stack has \textsc{root}, the buffer has the
+      sentence's words, and there are no edges
+    \item At the end, the buffer must be empty
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Action: Left}
+
+  \begin{itemize}
+    \item Add an edge $(w_j, w_i)$
+    \item $w_i$ is the top of the stack
+    \item $w_j$ is the first word of the buffer
+    \item Pop the stack
+      \pause
+    \item Stack and buffer must be non-empty; $w_i$ cannot be the root
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Action: Right}
+
+  \begin{itemize}
+    \item Add an edge $(w_i, w_j)$
+    \item $w_i$ is the top of the stack
+    \item $w_j$ is the first word in the buffer
+    \item Pop the stack
+    \item Replace $w_j$ by $w_i$ at the head of buffer
+      \pause
+    \item Stack and buffer must be non-empty
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Shift}
+
+  \begin{itemize}
+    \item Removes $w_i$ from the buffer
+    \item Places it on the stack
+      \pause
+    \item Buffer must be non-empty
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Shift Reduce Example}
+
+\begin{columns}
+	\column{.5\linewidth}
+		\begin{block}{Stack}
+			[\only<-17,19>{\textsc{root}}
+			\oa{2}{2}{economic}
+			\oa{4}{4}{news}
+			\oa{6}{14}{had}
+			\oa{7}{7}{little}
+			\oa{9}{13}{effect}
+			\oa{10}{12}{on}
+			\oa{11}{11}{financial}
+			\oa{16}{16}{had}]
+		\end{block}
+
+	\column{.5\linewidth}
+		\begin{block}{Buffer}
+			[\only<1>{economic, }\only<-3>{news, }\only<-5,15,17>{had\only<-15>{, }}\only<-6>{little, }\only<-8,14>{effect, }\only<-9,13>{on, }\only<-10>{financial, }\only<-12>{markets, }\only<18>{\textsc{root}}\only<-16>{.}]
+		\end{block}
+
+\end{columns}
+
+\only<1-2>{\gfx{sr_0}{.9}}
+\only<3-4>{\gfx{sr_1}{.9}}
+\only<5-7>{\gfx{sr_2}{.9}}
+\only<8-11>{\gfx{sr_3}{.9}}
+\only<12>{\gfx{sr_4}{.9}}
+\only<13>{\gfx{sr_5}{.9}}
+\only<14>{\gfx{sr_6}{.9}}
+\only<15-16>{\gfx{sr_7}{.9}}
+\only<17>{\gfx{sr_8}{.9}}
+\only<18->{\gfx{sr_9}{.9}}
+
+
+\begin{center}
+Next action: \only<1>{1. Shift}
+\only<2>{2. Left}
+\only<3>{3. Shift}
+\only<4>{4. Left}
+\only<5>{5. Shift}
+\only<6>{6. Shift}
+\only<7>{7. Left}
+\only<8>{8. Shift}
+\only<9>{9. Shift}
+\only<10>{10. Shift}
+\only<11>{11. Left}
+\only<12>{12. Right}
+\only<13>{13. Right}
+\only<14>{14. Right}
+\only<15>{15. Shift}
+\only<16>{16. Right}
+\only<17>{17. Right}
+\only<18>{18. Shift}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Transition Sequence Algorithm}
+
+  \begin{itemize}
+    \item Start with \textsc{root} on stack, buffer with whole sentence
+    \item If there's nothing on the stack, you must \emph{shift}
+    \item If the top of the stack is the child of the top of the
+      buffer, then make a \emph{left} edge
+    \item If the top of the buffer is is a child of the top of the
+      stack and the top of the buffer has no children that have yet to
+      be added to the tree, then make a \emph{right}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{How to apply to data}
+
+  \begin{itemize}
+    \item Create oracle for all sentences
+    \item Create three-way classifier for each possible actions
+    \item Features
+      \begin{itemize}
+        \item The top of the stack
+        \item Top two words on buffer
+        \item The parts of speech of the words
+      \end{itemize}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Complexity}
+
+  \pause
+  \begin{itemize}
+    \item A word can only enter the stack once
+    \item So complexity is $O(2N)$
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{}
+
+\begin{columns}
+	\column{.5\linewidth}
+		\begin{block}{Stack}
+			[\only<-19,21>{\textsc{root}}
+			\oa{2}{2}{I}
+			\oa{4}{18}{am}
+			\oa{5}{7}{the}
+			\oa{6}{6}{very}
+			\oa{9}{17}{model}
+			\oa{10}{16}{of}
+			\oa{11}{15}{a}
+			\oa{12}{14}{modern}
+			\oa{13}{13}{major}]
+		\end{block}
+
+	\column{.5\linewidth}
+		\begin{block}{Buffer}
+			[\only<1>{I, }\only<-3,19>{am\only<-3>{, }}\only<-4>{the,
+                        }\only<-5>{very, }\only<-8,18>{model,
+                        }\only<-9,17>{of, }\only<-10>{a, }\only<-11>{modern,
+                        }\only<-12>{major, }\only<-16>{general}\only<20>{\textsc{root}}]
+		\end{block}
+
+\end{columns}
+
+                \begin{block}{Edges}
+                  \oa{3}{21}{I $\leftarrow$ am \\}
+                  \oa{7}{21}{very $\leftarrow$ model \\}
+                  \oa{8}{21}{the $\leftarrow$ model \\}
+                  \oa{14}{21}{major $\leftarrow$ general \\}
+                  \oa{15}{21}{modern $\leftarrow$ general \\}
+                  \oa{16}{21}{a $\leftarrow$ general \\}
+                  \oa{17}{21}{of $\rightarrow$ general \\}
+                  \oa{18}{21}{model $\rightarrow$ of \\}
+                  \oa{19}{21}{am $\rightarrow$ model \\}
+                  \oa{20}{21}{\textsc{root} $\rightarrow$ am \\}
+
+                \end{block}
+
+\begin{center}
+\only<1>{Next action: 1. Shift}
+\only<2>{Next action: 2. Left}
+\only<3>{Next action: 3. Shift}
+\only<4>{Next action: 4. Shift}
+\only<5>{Next action: 5. Shift}
+\only<6>{Next action: 6. Left}
+\only<7>{Next action: 7. Left}
+\only<8>{Next action: 8. Shift}
+\only<9>{Next action: 9. Shift}
+\only<10>{Next action: 10. Shift}
+\only<11>{Next action: 11. Shift}
+\only<12>{Next action: 12. Shift}
+\only<13>{Next action: 13. Left}
+\only<14>{Next action: 14. Left}
+\only<15>{Next action: 15. Left}
+\only<16>{Next action: 16. Right}
+\only<17>{Next action: 17. Right}
+\only<18>{Next action: 18. Right}
+\only<19>{Next action: 19. Right}
+\only<20>{Next action: 20. Shift}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}{Transition Sequence Algorithm}
+
+  \begin{itemize}
+    \item Start with \textsc{root} on stack, buffer with whole sentence
+    \item If there's nothing on the stack, you must \emph{shift}
+    \item If the top of the stack is the child of the top of the
+      buffer, then make a \emph{left} edge
+    \item If the top of the buffer is is a child of the top of the
+      stack and the top of the buffer has no children that have yet to
+      be added to the tree, then make a \emph{right}
+  \end{itemize}
+
+\gfx{the_fat_cat_sat_on_the_mat}{.8}
+
+\end{frame}
+
+\begin{frame}{Parse to Transition Sequence}
+
+\begin{tabular}{lcccc}
+Action & Head Index & Head Word & Dep Index & Dep Word \\
+\hline
+s &  &  &  &  \\ \pause
+s &  &  &  &  \\\pause
+l & 3 & cat & 2 & fat \\\pause
+l & 3 & cat & 1 & the \\\pause
+s &  &  &  &  \\\pause
+l & 4 & sat & 3 & cat \\\pause
+s &  &  &  &  \\\pause
+s &  &  &  &  \\\pause
+s &  &  &  &  \\\pause
+l & 7 & mat & 6 & the \\\pause
+r & 5 & on & 7 & mat \\\pause
+r & 4 & sat & 5 & on \\\pause
+r & 0 & None & 4 & sat \\\pause
+s &  &  &  &  \\
+\end{tabular}
+\end{frame}
+
+\end{document}

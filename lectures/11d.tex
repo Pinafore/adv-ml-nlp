@@ -1,0 +1,164 @@
+
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{rl/#1}
+\end{center}
+}
+\title{Reinforcement Learning for NLP}
+\date{Deep Shift-Reduce Parsers}
+
+\usepackage{dependency/linkage6}
+
+\begin{document}
+
+\frame{\titlepage
+\tiny
+}
+
+\begin{frame}{What Makes NLP different from RL?}
+
+  \begin{itemize}
+    \item Often, best actions are {\bf known}
+    \item We're not just searching for high-reward
+    \item Sometimes actions themselves are known
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Roll In vs. Roll Out}
+  \gfx{lols-search}{.6}
+  \begin{itemize}
+    \item Roll In: Which states does the algorithm see
+    \item Roll Out: What states do you use for training
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Known Policy vs. Exploration}
+
+  \gfx{lols-roll}{.8}
+
+  \begin{itemize}
+    \item RL only gets reward
+    \item Roll-in with reference gives unrealistic trajectories
+    \item How to incorporate knowledge of true actions?
+    \item Train classifier as proxy for policy
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{RL for Translation}
+
+\begin{columns}
+  \column{.5\linewidth}
+  \gfx{nuremberg_translators}{.7}
+  \column{.5\linewidth}
+  \gfx{yoda}{.7}
+\end{columns}
+\end{frame}
+
+\begin{frame}{RL for Translation}
+
+\only<1>{\gfx{example_3}{.9}}
+\only<2>{\gfx{example_4}{.9}}
+\only<3>{\gfx{example_5}{.9}}
+\only<4>{\gfx{example_6}{.9}}
+\only<5>{\gfx{example_7}{.9}}
+\only<6>{\gfx{example_8}{.9}}
+\only<7>{\gfx{example_9}{.9}}
+\only<8>{\gfx{example_10}{.9}}
+\only<9>{\gfx{example_11}{.9}}
+\only<10>{\gfx{example_12}{.9}}
+\only<11>{\gfx{example_13}{.9}}
+\only<12>{\gfx{example_14}{.9}}
+\only<13>{\gfx{example_15}{.9}}
+\only<14>{\gfx{example_16}{.9}}
+\only<15>{\gfx{example_17}{.9}}
+\only<16>{\gfx{example_18}{.9}}
+\only<17>{\gfx{example_19}{.9}}
+
+
+\end{frame}
+
+
+\begin{frame}{How do we find a good policy?}
+  \only<1>{\gfx{searn_1}{.8}}
+  \only<2>{\gfx{searn_2}{.8}}
+  \only<3>{\gfx{searn_3}{.8}}
+  \only<4>{\gfx{searn_4}{.8}}
+  \only<5>{\gfx{searn_5}{.8}}
+  \only<6>{\gfx{searn_6}{.8}}
+  \only<7>{\gfx{searn_7}{.8}}
+  \only<8>{\gfx{searn_8}{.8}}
+  \only<9>{\gfx{searn_9}{.8}}
+\end{frame}
+
+
+\begin{frame}{LOLS}
+  \gfx{lols}{.8}
+\end{frame}
+
+\begin{frame}{LOLS on Dependency Parsing}
+
+  Policy is learning actions for shift-reduce parser
+  \gfx{lols-dp-results}{.7}
+
+\end{frame}
+
+\begin{frame}{But what structure is best?}
+
+  \begin{itemize}
+    \item RecNN not much better than DAN
+    \item But syntax may not be optimal
+    \item Can we learn structure?
+      \pause
+      \begin{itemize}
+        \item Policy learns shift-reduce parser
+        \item TreeLSTM with {\bf learned structure}
+        \item Reward is performance on downstream task
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Performance}
+
+  \gfx{learned-tree-results}{.8}
+
+\end{frame}
+
+\begin{frame}{What structures?}
+
+  \gfx{learned-tree}{.8}
+
+\end{frame}
+
+
+\begin{frame}{Other places of NLP + RL}
+
+  \begin{itemize}
+    \item Question answering
+    \item Language games
+    \item Dialog systems
+    \item Human learning
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Wrapup}
+
+  \begin{itemize}
+    \item RL allows for algorithms to think about long-term rewards
+    \item And to guide actions of a system
+    \item Important for systems that interact with world
+    \item Discrete action spaces often more difficult
+  \end{itemize}
+
+\end{frame}
+
+\end{document}
