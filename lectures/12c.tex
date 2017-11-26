@@ -1,0 +1,90 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\graphscale}{.6}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{interp/#1}
+\end{center}
+}
+\title{Interpretability}
+\date{Need for Interpretability}
+
+\begin{document}
+
+
+\frame{\titlepage
+
+Slides adapted from Tobias Schnabel
+}
+
+\begin{frame}{Evaluating Word Embeddings}
+
+  \gfx{sim-mc}{.8}
+  \begin{itemize}
+    \item Collected without reference to embeddings
+      \begin{itemize}
+\item Balance rare and frequent words (e.g., play vs. devour)
+\item Balance POS classes (e.g., skillfully vs. piano)
+\item Balance abstractness/concreteness (e.g., eagerness vs. table)
+      \end{itemize}
+    \item See if embeddings can answer questions
+    \item Perhaps not right questions to distinguish methods
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Proposal}
+
+\gfx{schnabel-compare}{1.0}
+
+Tobias Schnabel, Igor Labutov, David Mimno, and Thorsten Joachims.  \textit{Evaluation methods for unsupervised word embeddings}, EMNLP 2015.
+
+\end{frame}
+
+\begin{frame}{Setup}
+
+\begin{itemize}
+\item Embeddings
+\begin{itemize}
+\item Prediction-based: CBOW and Collobert\&Weston (CW)
+\item Reconstruction-based: CCA, Hellinger PCA, Random Projections, GloVe
+\item Trained on Wikipedia (2008), made vocabularies the same
+\end{itemize}
+\item Details
+\begin{itemize}
+\item Options came from position $k = 1, 5, 50$ in NN from each embedding
+\item 100 query words x 3 ranks = 300 subtasks
+\item Users of Amazon Mechanical Turk answered 50 such questions
+\end{itemize}
+\item Win score: Fraction of votes for each embedding, averaged
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Winners}
+  \gfx{schnabel_votes}{.9}
+\end{frame}
+
+\begin{frame}{What about Intruders?}
+
+  \only<1>{\gfx{schnabel-intruder-construction}{.9}}
+  \only<2>{\gfx{schnabel-intruder}{.8}}
+  \only<3>{\gfx{schnabel-intruder-results}{.9}}
+
+\end{frame}
+
+\begin{frame}{Downstream Tasks?}
+
+  \gfx{schnabel-downstream}{.9}
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,138 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\graphscale}{.6}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{interp/#1}
+\end{center}
+}
+\title{Interpretation}
+\date{Human in the Loop Evaluation}
+
+\begin{document}
+
+\frame{\titlepage
+}
+
+
+
+\begin{frame}{Evaluation}
+
+  \begin{itemize}
+    \item User study
+    \item 40 minutes
+    \item Sort documents into categories
+    \item What information / interface \alert<2>{helps best}
+      \pause
+      \pause
+      \begin{itemize}
+        \item Train a classifier on human examples
+          \only<4->{\alert<4>{(don't tell them how many labels)}}
+        \item Compare classifier labels to expert judgements
+          \only<5->{\alert<5>{(purity)}}
+\only<5>{
+\begin{equation}
+\mbox{purity}(\mathbf{U},\mathbf{G}) = \frac{1}{N}\sum\limits_{l} \max\limits_{j}|U_l \cap G_j|,
+\end{equation}
+}
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Which is more Useful?}
+
+\only<1>{
+  \begin{center}
+    Who should drive?
+  \end{center}
+}
+
+
+\only<2->{
+\begin{columns}
+  \column{.5\linewidth}
+    \begin{block}{Active Learning}
+      \begin{center}
+        \includegraphics[width=.85\linewidth]{eval/active_learning}
+      \end{center}
+    \end{block}
+  \column{.5\linewidth}
+  \pause
+    \begin{block}{Topic Models}
+      \begin{center}
+        \includegraphics[width=.475\linewidth]{eval/nyt_topics}
+      \end{center}
+
+    \end{block}
+
+
+\end{columns}
+}
+
+\end{frame}
+
+\fsi{eval/alto_interface}{}
+\fsi{eval/alto_interface_highlight}{Direct users
+  to document}
+
+
+
+\fsi{eval/user_talk_1}{ Active learning if time is short}
+\fsi{eval/user_talk_2}{ Better than status quo}
+\fsi{eval/user_talk_3}{ Active learning can
+  help topic models }
+\fsi{eval/user_talk_4}{ Topic models help
+  users understand the collection }
+\fsi{eval/user_talk_4}{ Moral: machines and
+  humans together (if you let them) }
+
+
+\begin{frame}{New Research}
+
+  \gfx{interp_predictions}{.8}
+  \begin{itemize}
+    \item Have a task humans are doing
+    \item Show them predicitons of good system
+    \item Measure how much human performance improves (degrades)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Improving Visualizations}
+
+  \gfx{viz_human_loop}{.8}
+
+  \begin{itemize}
+    \item If you have feedback on performance, can use RL
+    \item Change parameters of visualizations
+      \begin{itemize}
+        \item How many/which hypotheses are shown
+        \item How much/which evidence is shown
+        \item Is anything shown at all?
+        \only<2>{\item \alert<2>{Which questions are shown}}
+      \end{itemize}
+    \item Can optimize for team performance \popshow{2}{or just human performance}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Evaluation Takeaway}
+
+  \begin{itemize}
+    \item Measure what you care about
+      \item If you care about prediction, likelihood is good
+\item If you care about a particular task, measure that
+    \end{itemize}
+
+\end{frame}
+
+\end{document}

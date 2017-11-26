@@ -1,0 +1,112 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\graphscale}{.6}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{interp/#1}
+\end{center}
+}
+\title{Interpretability}
+\date{Need for Interpretability}
+
+\begin{document}
+
+
+\frame{\titlepage
+
+Slides adapted from Marco Tulio Ribeiro
+}
+
+\begin{frame}{Classification}
+
+  \begin{itemize}
+    \item But representation is often less important (means to end)
+    \item We really care about end result
+    \item And not doing simple things like decision trees / linear classifier
+    \pause
+    \item That's why we're making complicated algorithms
+
+  \end{itemize}
+
+  \gfx{messy_nn}{.8}
+
+\end{frame}
+
+\begin{frame}{LIME}
+
+  \gfx{lime_local}{.7}
+
+Marco Tulio Ribeiro, Sameer Singh, and Carlos Guestrin.  ``Why Should I Trust You?'' Explaining the Predictions of Any Classifier.
+
+LIME: Local Interpretable Model-Agnostic Explanations
+
+\end{frame}
+
+\begin{frame}{What's an Explanation}
+
+  \only<1>{\gfx{lime_explanation}{.9}}
+  \only<2>{\gfx{lime_image_explain}{.9}}
+\end{frame}
+
+
+
+\begin{frame}{What makes good Explanation?}
+
+  \begin{itemize}
+    \item Interpretable: Humans can Understand
+    \item Faithful: Describes Model
+    \item Model Agnostic: Generalize to Many Models
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Method}
+  \gfx{lime_distance_weight}{.5}
+
+  \begin{itemize}
+    \item Sample points around $x_i$
+    \item Use complex model to predict labels for each sample
+    \item Weigh samples according to distance to $x_i$
+        \item Learn new simple model on weighted samples
+        \item Use simple model to explain
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Perturbing an Example}
+
+  \only<1>{\gfx{lime_image_perturb}{1.0}}
+  \only<2>{\gfx{lime_word_perturb}{1.0}}
+
+\end{frame}
+
+\begin{frame}{Image Example}
+
+  \gfx{lime_image_ex}{.8}
+
+\end{frame}
+
+\begin{frame}{Is this a good Classifier?}
+
+  \only<1>{\gfx{lime_wolf}{.8}}
+  \only<2>{\gfx{lime_wolf_trust}{.8}}
+
+\end{frame}
+
+\begin{frame}{Improving ML Algorithms}
+
+  \only<1>{\gfx{lime_fe_overview}{.9}}
+  \only<2>{\gfx{mt_task}{.9}}
+  \only<3>{\gfx{mt_results}{.9}}
+\end{frame}
+
+
+\end{document}

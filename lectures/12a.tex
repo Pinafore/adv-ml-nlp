@@ -1,0 +1,104 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\graphscale}{.6}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{interp/#1}
+\end{center}
+}
+\title{Interpretability}
+\date{Need for Interpretability}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+\begin{frame}{Trust Part of ML Pipeline}
+
+  \gfx{learn_trust_deploy}{1.0}
+
+\end{frame}
+
+\frame{
+\frametitle{ML is Everywhere}
+
+\begin{columns}
+\column{.5\linewidth}
+\begin{itemize}
+  \item Authorizing credit
+  \item \alert<2>{Sentencing guidelines}
+  \item Prioritizing services
+  \item College acceptance
+  \item Suggesting medical treatment
+    \pause
+  \item<3-> How do we know it isn't being incompetent/evil?
+\end{itemize}
+\column{.5\linewidth}
+\only<1>{\gfx{investment}{.9}}
+\only<2->{
+\gfx{sentencing1}{.45}
+\gfx{sentencing2}{.45}
+\gfx{sentencing3}{.45}
+}
+\end{columns}
+
+}
+
+\fsi{interp/hal}{}
+
+\frame{
+  \frametitle{Keep it Simple (Stupid)}
+
+  \begin{itemize}
+    \item Clear preference for interpretability
+    \item Even at the cost of performance: decision trees still
+      popular
+    \item But what about all of the great machine learning we've talked about?
+  \end{itemize}
+
+}
+
+
+\frame{
+  \frametitle{We've already seen problems}
+  \begin{itemize}
+    \item \alert<1>{Gender/racial bias}
+    \item Generalization failures
+    \item \alert<2>{Malicious Input}
+  \end{itemize}
+
+  \only<1>{\gfx{gender}{.5}}
+  \only<2>{\gfx{tay}{.5}}
+}
+
+\begin{frame}{Can we just remove problematic variables?}
+
+  \begin{itemize}
+    \item Not obvious \textit{a priori}
+    \item Can find correlated features
+    \item More of a problem in deep learning
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Subject for Today}
+
+  \begin{itemize}
+    \item Intrinsic evaluation: topic models
+    \item Intrinsic evaluation: embeddings
+    \item Extrinsic evaluation: supervised ML
+    \item Extrinsic evaluation: visualizations for supervised ML
+      \end{itemize}
+\end{frame}
+
+\end{document}
