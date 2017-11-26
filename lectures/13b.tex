@@ -1,0 +1,167 @@
+\documentclass[compress]{beamer}
+\usefonttheme{professionalfonts}
+
+\input{course_style}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\newcommand{\normbar}[1]{\left\lVert#1\right\rVert}
+\newcommand{\graphscale}{.6}
+
+\newcommand{\gfx}[2]{
+\begin{center}
+	\includegraphics[width=#2\linewidth]{spectral/#1}
+\end{center}
+}
+\title{Spectral Methods}
+\date{Tensor Approach}
+
+\begin{document}
+
+
+\frame{\titlepage
+}
+
+\begin{frame}{Big Idea}
+
+  \begin{itemize}
+    \item You have a model
+    \item What correlations should you see if model true
+     \item Can you reverse the model from these correlations?
+       \pause
+       \item Yes!
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Simple Example: Mixture of Multinomials}
+  \begin{block}{Mixture of Multinomials}
+    \begin{itemize}
+      \item $k$ topics: $\phi_1, \dots \phi_k$
+        \item Observe topic $i$ with probability $\theta_i$
+          \item Observe $m$ (exchangeable) words $w_1, \dots w_m$ iid from $\phi_i$
+     \end{itemize}
+
+    \end{block}
+
+     \begin{itemize}
+       \item Given: $m$-word documents
+       \item Goal: $\phi$'s, $\theta$
+     \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Vector notation}
+
+  \begin{itemize}
+    \item One-hot word encoding $w_1 = [0, 1, 0, \dots]^\top$
+    \item $\phi_i$ are probability vectors
+    \item Conditional probabilities are parameters
+      \begin{equation}
+        \mbox{Pr}[w_1] = \e{}{w_1 \g \mbox{topic} i} = \phi_i
+      \end{equation}
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Method of Moments}
+
+  \begin{itemize}
+    \item Find parameters consisten with observed moments
+    \item Alternative to EM / objective-based techniques
+    \item Topic model moments
+      \begin{align}
+        \mbox{Pr}&[w_1] \\
+        \mbox{Pr}&[w_1, w_2] \\
+        \mbox{Pr}&[w_1, w_2, w_3] \\
+        & \vdots
+      \end{align}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{First Moment}
+
+  With one word per document,
+  \begin{equation}
+    \mbox{Pr}[w_1] = \sum_{i=1}^k \theta_i \phi_i
+  \end{equation}
+
+  Not identifiable: only $d$ numbers
+\end{frame}
+
+
+\begin{frame}{Problem setup}
+
+\begin{itemize}
+  \item (Tensor) Want to find good solution to
+  \begin{equation}
+    T = \sum_{t=1}^d \theta_t \vec \phi_t \otimes \vec \phi_t \otimes \vec \phi_t
+  \end{equation}
+  \begin{itemize}
+  \item $\otimes$ is dyadic product, creating a $d \times d \times d$ matrix (similar to $d \times d$ Anchor term)
+    \end{itemize}
+    \pause
+    \item (Matrix) Want to find eigendecomposition of
+      \begin{equation}
+        M = \sum_{t=1}^n \theta_t \vec \phi_t \vec \phi_t^\top
+      \end{equation}
+   \item But we won't see actual $M$, it will have error $\mathcal{E}$
+     \pause
+     \begin{itemize}
+       \item Unique if $\theta_i$ are
+         \item Solveable if $||\mathcal{E}||_2 < \min_{i\not = j} |\theta_i - \theta_j|$
+       \end{itemize}
+       \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Power iteration}
+
+  \gfx{power_decomp}{.8}
+
+\end{frame}
+
+\begin{frame}{Power iteration}
+
+  \begin{itemize}
+    \item Allows you to find individual eigenvalue / eigenvector pairs
+    \item Matrix: linearly quickly $O\left(\log \frac{1}{||\mathcal{E}||} \right)$
+    \item Tensor: quadratically quickly $O\left(\log \log \frac{1}{||\mathcal{E}||} \right)$
+    \item Both require gap between largest and second-largest $\theta_i$
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Alternative: Direct Minimization}
+
+  \begin{equation}
+    \normbar{T - \sum_t \theta_t \phi_t \otimes \phi_t \otimes \phi_t}_F^2
+  \end{equation}
+
+  \begin{itemize}
+    \item Use gradient descent to directly optimize parameters
+    \item Wins over ``standard'' approaches because fewer observations
+    \item Disliked by theory folks
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Spectral Methods}
+
+  \begin{itemize}
+    \item If you only care about high-level patterns
+    \item You can often get that from statistical summaries
+    \item {\bf Ignore the data!}
+    \item These approaches often have nice runtimes
+  \end{itemize}
+
+\end{frame}
+
+\end{document}
